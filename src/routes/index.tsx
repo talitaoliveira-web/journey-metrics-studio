@@ -139,9 +139,9 @@ function Dashboard() {
           </div>
           <div className="flex flex-wrap items-end gap-3">
             <div>
-              <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Período</label>
+              <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Data de início</label>
               <div className="flex h-9 items-center gap-2 rounded-md border border-border bg-card px-3 text-sm">
-                <Calendar className="h-4 w-4 text-muted-foreground" /> 01/09/2026 a 30/09/2026
+                <Calendar className="h-4 w-4 text-muted-foreground" /> 26/08/2026
               </div>
             </div>
             <div>

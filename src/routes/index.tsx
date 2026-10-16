@@ -1,24 +1,316 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import {
+  Bar, BarChart, CartesianGrid, LabelList, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
+} from "recharts";
+import {
+  Database, LogIn, Send, Target, GitBranch, TrendingUp, Lightbulb, ShieldAlert, Activity, Info, Calendar, Mail,
+} from "lucide-react";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Dashboard Executivo – Jornada Inbound Leads AON" },
+      { name: "description", content: "Visão executiva da jornada JNY_INBOUND_LEADS_AON: fluxo, performance de e-mails, consolidado e insights." },
+      { property: "og:title", content: "Dashboard Executivo – Jornada Inbound Leads AON" },
+      { property: "og:description", content: "Visão executiva da jornada JNY_INBOUND_LEADS_AON no Salesforce Marketing Cloud." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: Dashboard,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+const BLUE = "var(--color-primary)";
+const fmt = (n: number) => n.toLocaleString("pt-BR");
+const pct = (n: number) => n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
+
+const overview = [
+  { icon: Database, label: "Base da Data Extension", value: 7425, desc: "Contatos elegíveis disponíveis na base de origem." },
+  { icon: LogIn, label: "Entradas na Jornada", value: 1923, desc: "Contatos que iniciaram a jornada no período." },
+  { icon: Send, label: "Total de Envios", value: 3366, desc: "E-mails disparados ao longo das 5 comunicações." },
+  { icon: Target, label: "MQL", value: 546, desc: "Leads qualificados pelo marketing." },
+];
+
+const flow: { step: string; v: number; kind: "entry" | "email" | "wait" | "split" | "end" }[] = [
+  { step: "Entradas", v: 1923, kind: "entry" },
+  { step: "Email 01", v: 1923, kind: "email" },
+  { step: "Wait", v: 1899, kind: "wait" },
+  { step: "Decision Split", v: 1646, kind: "split" },
+  { step: "Email 02", v: 1188, kind: "email" },
+  { step: "Wait", v: 1098, kind: "wait" },
+  { step: "Decision Split", v: 376, kind: "split" },
+  { step: "Email 03", v: 867, kind: "email" },
+  { step: "Wait", v: 862, kind: "wait" },
+  { step: "Decision Split", v: 692, kind: "split" },
+  { step: "Email 04", v: 573, kind: "email" },
+  { step: "Wait", v: 573, kind: "wait" },
+  { step: "Decision Split", v: 483, kind: "split" },
+  { step: "Email 05", v: 483, kind: "email" },
+  { step: "Wait", v: 470, kind: "wait" },
+  { step: "Decision Final", v: 352, kind: "split" },
+  { step: "Não Convertido", v: 352, kind: "end" },
+];
+
+const emails = [
+  { email: "EML 01", sends: 1252, openRate: 28.55, uniqueOpens: 338, clicks: 15, ctr: 1.27, ctor: 4.44, bounce: 5.43, unsub: 1.01 },
+  { email: "EML 02", sends: 786, openRate: 10.09, uniqueOpens: 79, clicks: 5, ctr: 0.64, ctor: 6.33, bounce: 0.38, unsub: 0.77 },
+  { email: "EML 03", sends: 570, openRate: 4.59, uniqueOpens: 26, clicks: 2, ctr: 0.35, ctor: 7.69, bounce: 0.53, unsub: 0.35 },
+  { email: "EML 04", sends: 418, openRate: 62.92, uniqueOpens: 263, clicks: 15, ctr: 3.59, ctor: 5.7, bounce: 0.0, unsub: 1.44 },
+  { email: "EML 05", sends: 340, openRate: 59.29, uniqueOpens: 201, clicks: 8, ctr: 2.36, ctor: 3.98, bounce: 0.29, unsub: 0.88 },
+];
+
+const consolidated = [
+  { label: "Total Sends", value: "3.366" },
+  { label: "Unique Opens", value: "907" },
+  { label: "Open Rate", value: "27,56%", tone: "primary" },
+  { label: "Unique Clicks", value: "45" },
+  { label: "CTR", value: "1,37%", tone: "primary" },
+  { label: "CTOR", value: "4,96%", tone: "primary" },
+  { label: "Bounces", value: "75" },
+  { label: "Bounce Rate", value: "2,23%", tone: "warning" },
+  { label: "Unsubscribes", value: "29" },
+  { label: "Unsubscribe Rate", value: "0,88%", tone: "warning" },
+];
+
+const insights = [
+  { icon: GitBranch, title: "Fluxo da Jornada", tone: "primary", text: "A jornada apresenta redução gradual do volume de contatos ao longo das etapas, refletindo a evolução pelos diferentes caminhos configurados." },
+  { icon: TrendingUp, title: "Performance", tone: "success", text: "Os e-mails 4 e 5 apresentaram as maiores taxas de abertura da jornada." },
+  { icon: Lightbulb, title: "Oportunidade de Otimização", tone: "warning", text: "Os e-mails 2 e 3 apresentam oportunidade de revisão de assunto, conteúdo, CTA e momento do envio para ampliar o engajamento." },
+  { icon: ShieldAlert, title: "Entregabilidade", tone: "warning", text: "O primeiro envio concentrou a maior taxa de bounce da jornada, reforçando a importância do monitoramento da qualidade da base." },
+  { icon: Activity, title: "Monitoramento", tone: "primary", text: "Recomenda-se acompanhar continuamente os principais KPIs para apoiar otimizações futuras da jornada." },
+];
+
+const toneText: Record<string, string> = { primary: "text-primary", success: "text-success", warning: "text-warning" };
+const toneBg: Record<string, string> = { primary: "bg-primary-soft text-primary", success: "bg-success-soft text-success", warning: "bg-warning-soft text-warning" };
+
+function SectionTitle({ n, title, sub }: { n: string; title: string; sub?: string }) {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="col-span-12 mt-4 flex items-end justify-between border-b border-border pb-3">
+      <div className="flex items-baseline gap-3">
+        <span className="text-xs font-semibold tracking-widest text-primary">{n}</span>
+        <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+      </div>
+      {sub && <p className="text-xs text-muted-foreground">{sub}</p>}
+    </div>
+  );
+}
+
+function Panel({ className = "", title, children }: { className?: string; title?: string; children: React.ReactNode }) {
+  return (
+    <div className={`rounded-md border border-border bg-card p-5 ${className}`}>
+      {title && <h3 className="mb-4 text-sm font-semibold text-foreground">{title}</h3>}
+      {children}
+    </div>
+  );
+}
+
+const axis = { fontSize: 11, fill: "var(--color-muted-foreground)" };
+
+function Dashboard() {
+  const [selected, setSelected] = useState("all");
+  const rows = selected === "all" ? emails : emails.filter((e) => e.email === selected);
+  const maxFlow = 1923;
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="mx-auto grid max-w-[1600px] grid-cols-12 gap-5 px-10 py-10">
+        {/* Header */}
+        <header className="col-span-12 flex flex-wrap items-end justify-between gap-6 border-b border-border pb-6">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Globo • CRM • WPP Commerce</p>
+            <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">Dashboard Executivo</h1>
+            <p className="mt-1 text-base text-muted-foreground">
+              Jornada Inbound Leads AON <span className="mx-2 text-border">|</span> Salesforce Marketing Cloud
+            </p>
+          </div>
+          <div className="flex flex-wrap items-end gap-3">
+            <div>
+              <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Período</label>
+              <div className="flex h-9 items-center gap-2 rounded-md border border-border bg-card px-3 text-sm">
+                <Calendar className="h-4 w-4 text-muted-foreground" /> 01/09/2026 – 30/09/2026
+              </div>
+            </div>
+            <div>
+              <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Email</label>
+              <div className="flex h-9 items-center gap-2 rounded-md border border-border bg-card px-3 text-sm">
+                <Mail className="h-4 w-4 text-muted-foreground" />
+                <select value={selected} onChange={(e) => setSelected(e.target.value)} className="bg-transparent outline-none">
+                  <option value="all">Todos</option>
+                  {emails.map((e) => <option key={e.email} value={e.email}>{e.email}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Última atualização</p>
+              <p className="mt-1 text-sm font-medium text-foreground">16/10/2026 • 15:30</p>
+            </div>
+          </div>
+        </header>
+
+        {/* Block 1 */}
+        <SectionTitle n="01" title="Visão Geral da Jornada" sub="JNY_INBOUND_LEADS_AON" />
+        {overview.map((k) => (
+          <Panel key={k.label} className="col-span-12 md:col-span-6 xl:col-span-3">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{k.label}</p>
+              <k.icon className="h-4 w-4 text-primary" />
+            </div>
+            <p className="mt-3 text-4xl font-semibold tracking-tight text-foreground">{fmt(k.value)}</p>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{k.desc}</p>
+          </Panel>
+        ))}
+
+        {/* Block 2 */}
+        <SectionTitle n="02" title="Fluxo da Jornada" sub="Contatos por atividade" />
+        <Panel className="col-span-12 xl:col-span-8" title="Contatos por etapa">
+          <div className="space-y-1.5">
+            {flow.map((f, i) => (
+              <div key={i} className="grid grid-cols-12 items-center gap-3 text-sm">
+                <span className="col-span-1 text-right text-xs tabular-nums text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
+                <span className={`col-span-3 ${f.kind === "email" || f.kind === "entry" ? "font-semibold text-foreground" : "text-muted-foreground"}`}>{f.step}</span>
+                <div className="col-span-6 h-5 rounded-sm bg-muted">
+                  <div
+                    className={`h-5 rounded-sm ${f.kind === "email" || f.kind === "entry" ? "bg-primary" : f.kind === "end" ? "bg-warning" : "bg-primary/35"}`}
+                    style={{ width: `${(f.v / maxFlow) * 100}%` }}
+                  />
+                </div>
+                <span className="col-span-2 text-right font-medium tabular-nums text-foreground">{fmt(f.v)}</span>
+              </div>
+            ))}
+          </div>
+        </Panel>
+        <div className="col-span-12 flex flex-col gap-5 xl:col-span-4">
+          <Panel title="Resumo do fluxo">
+            <dl className="space-y-4 text-sm">
+              {[
+                ["Entradas", "1.923"],
+                ["Chegaram ao Email 05", "483"],
+                ["Decision Final", "352"],
+                ["Etapas mapeadas", "17"],
+              ].map(([a, b]) => (
+                <div key={a} className="flex items-center justify-between border-b border-border pb-3 last:border-0 last:pb-0">
+                  <dt className="text-muted-foreground">{a}</dt>
+                  <dd className="text-lg font-semibold text-foreground">{b}</dd>
+                </div>
+              ))}
+            </dl>
+          </Panel>
+          <Panel>
+            <div className="flex gap-3">
+              <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <div>
+                <p className="text-sm font-semibold text-foreground">Observação técnica</p>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                  Os volumes representam os contatos que passaram por cada atividade da jornada. Como existem Decision Splits, Waits, Joins e critérios de saída, esses valores não representam um funil linear.
+                </p>
+              </div>
+            </div>
+          </Panel>
+        </div>
+
+        {/* Block 3 */}
+        <SectionTitle n="03" title="Performance dos Emails" sub="Resultados operacionais dos disparos" />
+        <Panel className="col-span-12 overflow-x-auto" title="Comparativo por e-mail">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border text-left text-[11px] uppercase tracking-wide text-muted-foreground">
+                {["Email", "Sends", "Open Rate", "Unique Opens", "Clicks", "CTR", "CTOR", "Bounce Rate", "Unsub. Rate"].map((h, i) => (
+                  <th key={h} className={`py-3 font-medium ${i ? "text-right" : ""}`}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((e) => (
+                <tr key={e.email} className="border-b border-border last:border-0">
+                  <td className="py-3 font-semibold text-foreground">{e.email}</td>
+                  <td className="py-3 text-right tabular-nums">{fmt(e.sends)}</td>
+                  <td className={`py-3 text-right font-medium tabular-nums ${e.openRate > 50 ? "text-success" : ""}`}>{pct(e.openRate)}</td>
+                  <td className="py-3 text-right tabular-nums">{fmt(e.uniqueOpens)}</td>
+                  <td className="py-3 text-right tabular-nums">{e.clicks}</td>
+                  <td className="py-3 text-right tabular-nums">{pct(e.ctr)}</td>
+                  <td className="py-3 text-right tabular-nums">{pct(e.ctor)}</td>
+                  <td className={`py-3 text-right tabular-nums ${e.bounce > 5 ? "font-medium text-warning" : ""}`}>{pct(e.bounce)}</td>
+                  <td className="py-3 text-right tabular-nums">{pct(e.unsub)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Panel>
+
+        <Panel className="col-span-12 lg:col-span-4" title="Sends por e-mail">
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={rows} margin={{ top: 20, right: 8, left: -16, bottom: 0 }}>
+              <CartesianGrid vertical={false} stroke="var(--color-border)" />
+              <XAxis dataKey="email" tick={axis} axisLine={false} tickLine={false} />
+              <YAxis tick={axis} axisLine={false} tickLine={false} />
+              <Tooltip cursor={{ fill: "var(--color-muted)" }} />
+              <Bar dataKey="sends" name="Sends" fill={BLUE} radius={[2, 2, 0, 0]} barSize={32}>
+                <LabelList dataKey="sends" position="top" style={axis} />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </Panel>
+        <Panel className="col-span-12 lg:col-span-4" title="Open Rate (%)">
+          <ResponsiveContainer width="100%" height={240}>
+            <LineChart data={rows} margin={{ top: 20, right: 16, left: -16, bottom: 0 }}>
+              <CartesianGrid vertical={false} stroke="var(--color-border)" />
+              <XAxis dataKey="email" tick={axis} axisLine={false} tickLine={false} />
+              <YAxis tick={axis} axisLine={false} tickLine={false} />
+              <Tooltip formatter={(v: number) => pct(v)} />
+              <Line type="linear" dataKey="openRate" name="Open Rate" stroke={BLUE} strokeWidth={2} dot={{ r: 4, fill: BLUE }}>
+                <LabelList dataKey="openRate" position="top" style={axis} formatter={(v: number) => pct(v)} />
+              </Line>
+            </LineChart>
+          </ResponsiveContainer>
+        </Panel>
+        <Panel className="col-span-12 lg:col-span-4" title="CTR (%)">
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={rows} layout="vertical" margin={{ top: 0, right: 40, left: 0, bottom: 0 }}>
+              <CartesianGrid horizontal={false} stroke="var(--color-border)" />
+              <XAxis type="number" tick={axis} axisLine={false} tickLine={false} />
+              <YAxis type="category" dataKey="email" tick={axis} axisLine={false} tickLine={false} width={56} />
+              <Tooltip formatter={(v: number) => pct(v)} cursor={{ fill: "var(--color-muted)" }} />
+              <Bar dataKey="ctr" name="CTR" fill={BLUE} radius={[0, 2, 2, 0]} barSize={20}>
+                <LabelList dataKey="ctr" position="right" style={axis} formatter={(v: number) => pct(v)} />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </Panel>
+
+        {/* Block 4 */}
+        <SectionTitle n="04" title="Consolidado" sub="Total da jornada" />
+        <div className="col-span-12 grid grid-cols-2 gap-5 md:grid-cols-5">
+          {consolidated.map((c) => (
+            <Panel key={c.label}>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{c.label}</p>
+              <p className={`mt-2 text-2xl font-semibold tracking-tight ${c.tone ? toneText[c.tone] : "text-foreground"}`}>{c.value}</p>
+            </Panel>
+          ))}
+        </div>
+
+        {/* Block 5 */}
+        <SectionTitle n="05" title="Principais Insights" />
+        <div className="col-span-12 grid gap-5 md:grid-cols-2 xl:grid-cols-5">
+          {insights.map((i) => (
+            <Panel key={i.title}>
+              <div className={`mb-3 inline-flex h-8 w-8 items-center justify-center rounded-md ${toneBg[i.tone]}`}>
+                <i.icon className="h-4 w-4" />
+              </div>
+              <p className="text-sm font-semibold text-foreground">{i.title}</p>
+              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{i.text}</p>
+            </Panel>
+          ))}
+        </div>
+
+        {/* Block 6 */}
+        <footer className="col-span-12 mt-6 border-t border-border pt-5">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">06 · Observações Técnicas</p>
+          <p className="mt-2 max-w-5xl text-xs leading-relaxed text-muted-foreground">
+            As métricas de Fluxo da Jornada representam os contatos que passaram pelas atividades configuradas no Journey Builder. As métricas de Performance dos E-mails representam os resultados operacionais dos disparos. Esses conjuntos possuem granularidades distintas e não devem ser comparados diretamente.
+          </p>
+        </footer>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { EmailGallery } from "@/components/email-gallery";
 import {
   Bar, BarChart, CartesianGrid, LabelList, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
@@ -274,21 +275,7 @@ function Dashboard() {
 
         {/* Peças */}
         <SectionTitle n="02.1" title="Peças da Jornada" sub="Os 5 e-mails enviados" />
-        <div className="col-span-12 grid gap-5 md:grid-cols-2 xl:grid-cols-5">
-          {pieces.map((p) => (
-            <Panel key={p.id} className="flex flex-col">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-primary">{p.id}</p>
-              <div className="mt-3 h-72 overflow-hidden rounded-sm border border-border bg-muted">
-                <a href={p.img.url} target="_blank" rel="noreferrer">
-                  <img src={p.img.url} alt={`Layout do ${p.id}`} className="w-full object-cover object-top" loading="lazy" />
-                </a>
-              </div>
-              <p className="mt-3 text-sm font-semibold text-foreground">{p.subject}</p>
-              <p className="mt-1 text-xs italic text-muted-foreground">{p.pre}</p>
-              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{p.desc}</p>
-            </Panel>
-          ))}
-        </div>
+        <EmailGallery pieces={pieces} />
 
         {/* Block 3 */}
         <SectionTitle n="03" title="Performance dos Emails" sub="Resultados operacionais dos disparos" />

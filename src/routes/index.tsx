@@ -6,6 +6,19 @@ import {
 import {
   Database, LogIn, Send, Target, GitBranch, TrendingUp, Lightbulb, ShieldAlert, Activity, Info, Calendar, Mail,
 } from "lucide-react";
+import e1 from "@/assets/eml01.jpg.asset.json";
+import e2 from "@/assets/eml02.jpg.asset.json";
+import e3 from "@/assets/eml03.jpg.asset.json";
+import e4 from "@/assets/eml04.jpg.asset.json";
+import e5 from "@/assets/eml05.jpg.asset.json";
+
+const pieces = [
+  { id: "EML 01", img: e1, subject: "O que é Globo Ads? A gente te mostra", pre: "Conheça soluções para diferentes objetivos de marca", desc: "Apresenta a proposta de valor da Globo Ads e quebra a objeção de que a Globo é só TV, com CTA para o formulário." },
+  { id: "EML 02", img: e2, subject: "O que acontece quando marcas se conectam à Globo?", pre: "Resultados e insights para inspirar sua estratégia", desc: "Reforça o valor com cases de sucesso e big numbers, levando novamente ao formulário." },
+  { id: "EML 03", img: e3, subject: "Anunciar com a Globo é mais simples do que parece", pre: "Entenda como funciona na prática", desc: "Mantém a quebra de objeções com argumentos, benefícios e cases." },
+  { id: "EML 04", img: e4, subject: "Vamos avançar com Globo Ads?", pre: "Falta só um próximo passo!", desc: "Tom mais personalizado e consultivo; desempenho superior ao EML 03." },
+  { id: "EML 05", img: e5, subject: "O mercado está se movendo. E sua marca?", pre: "Veja onde estão as novas oportunidades", desc: "Última etapa: estrutura visual diferente, grandes cases e última chance de preencher o formulário." },
+];
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -257,6 +270,24 @@ function Dashboard() {
               </div>
             </div>
           </Panel>
+        </div>
+
+        {/* Peças */}
+        <SectionTitle n="02.1" title="Peças da Jornada" sub="Os 5 e-mails enviados" />
+        <div className="col-span-12 grid gap-5 md:grid-cols-2 xl:grid-cols-5">
+          {pieces.map((p) => (
+            <Panel key={p.id} className="flex flex-col">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-primary">{p.id}</p>
+              <div className="mt-3 h-72 overflow-hidden rounded-sm border border-border bg-muted">
+                <a href={p.img.url} target="_blank" rel="noreferrer">
+                  <img src={p.img.url} alt={`Layout do ${p.id}`} className="w-full object-cover object-top" loading="lazy" />
+                </a>
+              </div>
+              <p className="mt-3 text-sm font-semibold text-foreground">{p.subject}</p>
+              <p className="mt-1 text-xs italic text-muted-foreground">{p.pre}</p>
+              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{p.desc}</p>
+            </Panel>
+          ))}
         </div>
 
         {/* Block 3 */}

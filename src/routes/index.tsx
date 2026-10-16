@@ -148,6 +148,56 @@ function Dashboard() {
           </div>
         </header>
 
+        {/* Block 0 - Context */}
+        <SectionTitle n="00" title="Contexto da Jornada" sub="Objetivo, lógica e cadência" />
+        <Panel className="col-span-12 xl:col-span-7" title="Objetivo">
+          <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
+            <p>Qualificar novos leads, estimular o preenchimento dos dados e atualizar a base de CRM — principalmente com o <span className="font-semibold text-foreground">CNPJ da empresa</span>. Quanto mais dados obtidos, melhor entendemos o lead para direcioná-lo a ações de relacionamento e oportunidades comerciais.</p>
+            <p>Os leads chegam à Data Extension por diversos canais: site da Globo, eventos, campanhas de marketing e outras ações internas e externas.</p>
+            <p>A jornada também tem papel <span className="font-semibold text-foreground">educativo</span>: o lead conhece a Globo Ads, entende como a plataforma funciona, acessa casos de sucesso e descobre como usar as soluções de forma estratégica.</p>
+          </div>
+        </Panel>
+        <div className="col-span-12 flex flex-col gap-5 xl:col-span-5">
+          <Panel title="Lógica do fluxo">
+            <ol className="space-y-2 text-sm text-muted-foreground">
+              {[
+                "Lead entra na Journey e recebe o Email 01.",
+                "Se clicar no CTA e preencher o formulário, o objetivo é atingido e ele sai do fluxo rumo ao comercial.",
+                "Se não preencher, segue recebendo as comunicações, sem regra de exclusão.",
+              ].map((t, i) => (
+                <li key={i} className="flex gap-3">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-sm bg-primary-soft text-[11px] font-semibold text-primary">{i + 1}</span>
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ol>
+          </Panel>
+          <Panel title="Cadência">
+            <p className="text-3xl font-semibold text-primary">6 dias</p>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Intervalo entre envios: dá tempo ao lead para consumir o conteúdo e agir, mantendo a marca presente sem excesso de contatos.</p>
+          </Panel>
+        </div>
+        <Panel className="col-span-12" title="Lógica da SQL de entrada">
+          <p className="mb-4 text-sm leading-relaxed text-muted-foreground">A partir da base de Leads sincronizada com o Salesforce, a SQL aplica regras de negócio para construir a audiência elegível da Journey.</p>
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {[
+              ["Proprietário", "Leads do proprietário Relacionamento com Mercado"],
+              ["E-mail válido", "Apenas contatos com e-mail válido"],
+              ["Sem opt-out", "Respeito às preferências de comunicação"],
+              ["Status elegíveis", "Ativo, Conhecendo, Novo e Qualificando"],
+              ["Sem CNPJ", "Leads sem CNPJ cadastrado, foco da qualificação B2B"],
+              ["Sem reentrada", "Exclui quem já participou da jornada"],
+              ["Deduplicação", "Um registro por e-mail"],
+              ["Resultado", "Audiência qualificada e validada antes do 1º envio"],
+            ].map(([t, d], i) => (
+              <div key={t} className="rounded-md border border-border p-3">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-primary">{String(i + 1).padStart(2, "0")} · {t}</p>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{d}</p>
+              </div>
+            ))}
+          </div>
+        </Panel>
+
         {/* Block 1 */}
         <SectionTitle n="01" title="Visão Geral da Jornada" sub="JNY_INBOUND_LEADS_AON" />
         {overview.map((k) => (

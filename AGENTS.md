@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep email artwork previews and their accessible zoom dialog in a dedicated gallery component, so compact previews and full-image inspection stay consistent.

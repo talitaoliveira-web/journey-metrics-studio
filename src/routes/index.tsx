@@ -23,9 +23,9 @@ const pieces = [
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Dashboard Executivo – Jornada Inbound Leads AON" },
+      { title: "Jornada inbound AON" },
       { name: "description", content: "Visão executiva da jornada JNY_INBOUND_LEADS_AON: fluxo, performance de e-mails, consolidado e insights." },
-      { property: "og:title", content: "Dashboard Executivo – Jornada Inbound Leads AON" },
+      { property: "og:title", content: "Jornada inbound AON" },
       { property: "og:description", content: "Visão executiva da jornada JNY_INBOUND_LEADS_AON no Salesforce Marketing Cloud." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -132,16 +132,16 @@ function Dashboard() {
         <header className="col-span-12 flex flex-wrap items-end justify-between gap-6 border-b border-border pb-6">
           <div>
             <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Globo • CRM • WPP Commerce</p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">Dashboard Executivo</h1>
+            <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">Jornada inbound AON</h1>
             <p className="mt-1 text-base text-muted-foreground">
-              Jornada Inbound Leads AON <span className="mx-2 text-border">|</span> Salesforce Marketing Cloud
+              Salesforce Marketing Cloud
             </p>
           </div>
           <div className="flex flex-wrap items-end gap-3">
             <div>
               <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Período</label>
               <div className="flex h-9 items-center gap-2 rounded-md border border-border bg-card px-3 text-sm">
-                <Calendar className="h-4 w-4 text-muted-foreground" /> 01/09/2026 – 30/09/2026
+                <Calendar className="h-4 w-4 text-muted-foreground" /> 01/09/2026 a 30/09/2026
               </div>
             </div>
             <div>
@@ -165,7 +165,7 @@ function Dashboard() {
         <SectionTitle n="00" title="Contexto da Jornada" sub="Objetivo, lógica e cadência" />
         <Panel className="col-span-12 xl:col-span-7" title="Objetivo">
           <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
-            <p>Qualificar novos leads, estimular o preenchimento dos dados e atualizar a base de CRM — principalmente com o <span className="font-semibold text-foreground">CNPJ da empresa</span>. Quanto mais dados obtidos, melhor entendemos o lead para direcioná-lo a ações de relacionamento e oportunidades comerciais.</p>
+            <p>Qualificar novos leads, estimular o preenchimento dos dados e atualizar a base de CRM, principalmente com o <span className="font-semibold text-foreground">CNPJ da empresa</span>. Quanto mais dados obtidos, melhor entendemos o lead para direcioná-lo a ações de relacionamento e oportunidades comerciais.</p>
             <p>Os leads chegam à Data Extension por diversos canais: site da Globo, eventos, campanhas de marketing e outras ações internas e externas.</p>
             <p>A jornada também tem papel <span className="font-semibold text-foreground">educativo</span>: o lead conhece a Globo Ads, entende como a plataforma funciona, acessa casos de sucesso e descobre como usar as soluções de forma estratégica.</p>
           </div>

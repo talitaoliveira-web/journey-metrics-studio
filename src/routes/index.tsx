@@ -49,20 +49,20 @@ const overview = [
 const flow: { step: string; v: number; kind: "entry" | "email" | "wait" | "split" | "end" }[] = [
   { step: "Entradas", v: 1923, kind: "entry" },
   { step: "Email 01", v: 1923, kind: "email" },
-  { step: "Wait", v: 1899, kind: "wait" },
-  { step: "Decision Split", v: 1646, kind: "split" },
+  { step: "Aguardando próximo envio", v: 1899, kind: "wait" },
+  { step: "Validação do MQL", v: 1646, kind: "split" },
   { step: "Email 02", v: 1188, kind: "email" },
-  { step: "Wait", v: 1098, kind: "wait" },
-  { step: "Decision Split", v: 376, kind: "split" },
+  { step: "Aguardando próximo envio", v: 1098, kind: "wait" },
+  { step: "Validação do MQL", v: 376, kind: "split" },
   { step: "Email 03", v: 867, kind: "email" },
-  { step: "Wait", v: 862, kind: "wait" },
-  { step: "Decision Split", v: 692, kind: "split" },
+  { step: "Aguardando próximo envio", v: 862, kind: "wait" },
+  { step: "Validação do MQL", v: 692, kind: "split" },
   { step: "Email 04", v: 573, kind: "email" },
-  { step: "Wait", v: 573, kind: "wait" },
-  { step: "Decision Split", v: 483, kind: "split" },
+  { step: "Aguardando próximo envio", v: 573, kind: "wait" },
+  { step: "Validação do MQL", v: 483, kind: "split" },
   { step: "Email 05", v: 483, kind: "email" },
-  { step: "Wait", v: 470, kind: "wait" },
-  { step: "Decision Final", v: 352, kind: "split" },
+  { step: "Aguardando próximo envio", v: 470, kind: "wait" },
+  { step: "Última validação do MQL", v: 352, kind: "split" },
   { step: "Não Convertido", v: 352, kind: "end" },
 ];
 
@@ -175,9 +175,10 @@ function Dashboard() {
           <Panel title="Lógica do fluxo">
             <ol className="space-y-2 text-sm text-muted-foreground">
               {[
-                "Lead entra na Journey e recebe o Email 01.",
-                "Se clicar no CTA e preencher o formulário, o objetivo é atingido e ele sai do fluxo rumo ao comercial.",
-                "Se não preencher, segue recebendo as comunicações, sem regra de exclusão.",
+                "O contato entra na jornada e recebe o Email 01. Não existe exclusão automática por falta de engajamento.",
+                "A cada etapa, a jornada verifica se o MQL foi preenchido. Se sim, o objetivo é atingido e o contato sai do fluxo rumo ao comercial.",
+                "Se ainda não preencheu o MQL, ele avança para um novo fluxo de comunicação, com conteúdos mais aprofundados sobre o ecossistema Globo Ads.",
+                "Abrir ou clicar nos e-mails não tira o contato da jornada: ele segue para as próximas etapas até preencher o MQL.",
               ].map((t, i) => (
                 <li key={i} className="flex gap-3">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-sm bg-primary-soft text-[11px] font-semibold text-primary">{i + 1}</span>
@@ -185,10 +186,16 @@ function Dashboard() {
                 </li>
               ))}
             </ol>
+            <p className="mt-3 rounded-md border border-border bg-muted p-3 text-xs leading-relaxed text-muted-foreground">
+              A jornada não é um fluxo linear de exclusão por engajamento: é um processo contínuo de nutrição que só termina quando o contato converte em MQL.
+            </p>
           </Panel>
-          <Panel title="Cadência">
+          <Panel title="Cadência e horário de envio">
             <p className="text-3xl font-semibold text-primary">6 dias</p>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Intervalo entre envios: dá tempo ao lead para consumir o conteúdo e agir, mantendo a marca presente sem excesso de contatos.</p>
+            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+              <span className="font-semibold text-foreground">Einstein Send Time Optimization (STO):</span> o horário de disparo de cada e-mail é definido automaticamente por inteligência preditiva, aumentando a chance de abertura e engajamento de cada contato.
+            </p>
           </Panel>
         </div>
         <Panel className="col-span-12" title="Lógica da SQL de entrada">
@@ -249,8 +256,9 @@ function Dashboard() {
             <dl className="space-y-4 text-sm">
               {[
                 ["Entradas", "1.923"],
+                ["MQL preenchido", "546"],
                 ["Chegaram ao Email 05", "483"],
-                ["Decision Final", "352"],
+                ["Última validação do MQL", "352"],
                 ["Etapas mapeadas", "17"],
               ].map(([a, b]) => (
                 <div key={a} className="flex items-center justify-between border-b border-border pb-3 last:border-0 last:pb-0">
@@ -265,9 +273,9 @@ function Dashboard() {
               <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
               <div>
                 <p className="text-sm font-semibold text-foreground">Observação técnica</p>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  Os volumes representam os contatos que passaram por cada atividade da jornada. Como existem Decision Splits, Waits, Joins e critérios de saída, esses valores não representam um funil linear.
-                </p>
+                 <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                   Os volumes representam os contatos que passaram por cada etapa da jornada. Como existem validações do MQL, intervalos entre envios e critérios de saída, esses valores não representam um funil linear.
+                 </p>
               </div>
             </div>
           </Panel>

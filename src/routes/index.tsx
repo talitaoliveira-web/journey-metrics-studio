@@ -35,16 +35,25 @@ export const Route = createFileRoute("/")({
   component: Dashboard,
 });
 
-const BLUE = "var(--color-primary)";
+const BLUE = "var(--globo-blue)";
 const fmt = (n: number) => n.toLocaleString("pt-BR");
 const pct = (n: number) => n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
 
 const overview = [
-  { icon: Database, label: "Base da Data Extension", value: 7425, desc: "Contatos elegíveis disponíveis na base de origem." },
-  { icon: LogIn, label: "Entradas na Jornada", value: 1923, desc: "Contatos que iniciaram a jornada no período." },
-  { icon: Send, label: "Total de Envios", value: 3366, desc: "E-mails disparados ao longo das 5 comunicações." },
-  { icon: Target, label: "MQL", value: 546, desc: "Leads qualificados pelo marketing." },
+  { icon: Database, label: "Base da Data Extension", value: 7425, desc: "Contatos elegíveis disponíveis na base de origem.", tone: "blue" },
+  { icon: LogIn, label: "Entradas na Jornada", value: 1923, desc: "Contatos que iniciaram a jornada no período.", tone: "purple" },
+  { icon: Send, label: "Total de Envios", value: 3366, desc: "E-mails disparados ao longo das 5 comunicações.", tone: "pink" },
+  { icon: Target, label: "MQL", value: 546, desc: "Leads qualificados pelo marketing.", tone: "orange" },
 ];
+
+const kpiChip: Record<string, string> = {
+  blue: "bg-globo-blue/10 text-globo-blue",
+  purple: "bg-globo-purple/10 text-globo-purple",
+  pink: "bg-globo-pink/10 text-globo-pink",
+  orange: "bg-globo-orange/10 text-globo-orange",
+};
+
+const emailColors = ["var(--globo-blue)", "var(--globo-purple)", "var(--globo-pink)", "var(--globo-orange)", "var(--color-success)"];
 
 const flow: { step: string; v: number; kind: "entry" | "email" | "wait" | "split" | "end" }[] = [
   { step: "Entradas", v: 1923, kind: "entry" },
@@ -98,11 +107,11 @@ const insights = [
 const toneText: Record<string, string> = { primary: "text-primary", success: "text-success", warning: "text-warning" };
 const toneBg: Record<string, string> = { primary: "bg-primary-soft text-primary", success: "bg-success-soft text-success", warning: "bg-warning-soft text-warning" };
 
-function SectionTitle({ n, title, sub }: { n: string; title: string; sub?: string }) {
+function SectionTitle({ n, title, sub, color = "bg-globo-blue" }: { n: string; title: string; sub?: string; color?: string }) {
   return (
     <div className="col-span-12 mt-4 flex items-end justify-between border-b border-border pb-3">
-      <div className="flex items-baseline gap-3">
-        <span className="text-xs font-semibold tracking-widest text-primary">{n}</span>
+      <div className="flex items-center gap-3">
+        <span className={`flex h-7 min-w-9 items-center justify-center rounded-md px-1.5 text-xs font-bold text-primary-foreground ${color}`}>{n}</span>
         <h2 className="text-lg font-semibold text-foreground">{title}</h2>
       </div>
       {sub && <p className="text-xs text-muted-foreground">{sub}</p>}
@@ -130,40 +139,40 @@ function Dashboard() {
     <div className="min-h-screen bg-background">
       <div className="mx-auto grid max-w-[1600px] grid-cols-12 gap-5 px-10 py-10">
         {/* Header */}
-        <header className="col-span-12 flex flex-wrap items-end justify-between gap-6 border-b border-border pb-6">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Globo • CRM • WPP Commerce</p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">Jornada inbound AON</h1>
-            <p className="mt-1 text-base text-muted-foreground">
-              Salesforce Marketing Cloud
-            </p>
-          </div>
-          <div className="flex flex-wrap items-end gap-3">
+        <header className="col-span-12 overflow-hidden rounded-2xl globo-gradient p-8 text-primary-foreground shadow-lg">
+          <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Data de início</label>
-              <div className="flex h-9 items-center gap-2 rounded-md border border-border bg-card px-3 text-sm">
-                <Calendar className="h-4 w-4 text-muted-foreground" /> 26/08/2026
-              </div>
+              <p className="text-xs font-medium uppercase tracking-widest text-primary-foreground/70">Globo • CRM • WPP Commerce</p>
+              <h1 className="mt-2 text-4xl font-bold tracking-tight">Jornada inbound AON</h1>
+              <p className="mt-1 text-base text-primary-foreground/80">Salesforce Marketing Cloud • JNY_INBOUND_LEADS_AON</p>
             </div>
-            <div>
-              <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Email</label>
-              <div className="flex h-9 items-center gap-2 rounded-md border border-border bg-card px-3 text-sm">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <select value={selected} onChange={(e) => setSelected(e.target.value)} className="bg-transparent outline-none">
-                  <option value="all">Todos</option>
-                  {emails.map((e) => <option key={e.email} value={e.email}>{e.email}</option>)}
-                </select>
+            <div className="flex flex-wrap items-end gap-3">
+              <div>
+                <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-primary-foreground/70">Data de início</label>
+                <div className="flex h-9 items-center gap-2 rounded-md border border-primary-foreground/25 bg-primary-foreground/10 px-3 text-sm">
+                  <Calendar className="h-4 w-4 text-primary-foreground/70" /> 26/08/2026
+                </div>
               </div>
-            </div>
-            <div className="text-right">
-              <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Última atualização</p>
-              <p className="mt-1 text-sm font-medium text-foreground">16/10/2026 • 15:30</p>
+              <div>
+                <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-primary-foreground/70">Email</label>
+                <div className="flex h-9 items-center gap-2 rounded-md border border-primary-foreground/25 bg-primary-foreground/10 px-3 text-sm">
+                  <Mail className="h-4 w-4 text-primary-foreground/70" />
+                  <select value={selected} onChange={(e) => setSelected(e.target.value)} className="bg-transparent outline-none">
+                    <option value="all">Todos</option>
+                    {emails.map((e) => <option key={e.email} value={e.email}>{e.email}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-[11px] font-medium uppercase tracking-wide text-primary-foreground/70">Última atualização</p>
+                <p className="mt-1 text-sm font-medium">16/10/2026 • 15:30</p>
+              </div>
             </div>
           </div>
         </header>
 
         {/* Block 0 - Context */}
-        <SectionTitle n="00" title="Contexto da Jornada" sub="Objetivo, lógica e cadência" />
+        <SectionTitle n="00" title="Contexto da Jornada" sub="Objetivo, lógica e cadência" color="bg-globo-blue" />
         <Panel className="col-span-12 xl:col-span-7" title="Objetivo">
           <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
             <p>Qualificar novos leads, estimular o preenchimento dos dados e atualizar a base de CRM, principalmente com o <span className="font-semibold text-foreground">CNPJ da empresa</span>. Quanto mais dados obtidos, melhor entendemos o lead para direcioná-lo a ações de relacionamento e oportunidades comerciais.</p>
@@ -191,7 +200,7 @@ function Dashboard() {
             </p>
           </Panel>
           <Panel title="Cadência e horário de envio">
-            <p className="text-3xl font-semibold text-primary">6 dias</p>
+            <p className="globo-gradient bg-clip-text text-3xl font-semibold text-transparent">6 dias</p>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Intervalo entre envios: dá tempo ao lead para consumir o conteúdo e agir, mantendo a marca presente sem excesso de contatos.</p>
             <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
               <span className="font-semibold text-foreground">Einstein Send Time Optimization (STO):</span> o horário de disparo de cada e-mail é definido automaticamente por inteligência preditiva, aumentando a chance de abertura e engajamento de cada contato.
@@ -212,7 +221,7 @@ function Dashboard() {
               ["Resultado", "Audiência qualificada e validada antes do 1º envio"],
             ].map(([t, d], i) => (
               <div key={t} className="rounded-md border border-border p-3">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-primary">{String(i + 1).padStart(2, "0")} · {t}</p>
+                <p className={`text-[11px] font-semibold uppercase tracking-wide ${["text-globo-blue", "text-globo-purple", "text-globo-pink", "text-globo-orange"][i % 4]}`}>{String(i + 1).padStart(2, "0")} · {t}</p>
                 <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{d}</p>
               </div>
             ))}
@@ -220,12 +229,14 @@ function Dashboard() {
         </Panel>
 
         {/* Block 1 */}
-        <SectionTitle n="01" title="Visão Geral da Jornada" sub="JNY_INBOUND_LEADS_AON" />
+        <SectionTitle n="01" title="Visão Geral da Jornada" sub="JNY_INBOUND_LEADS_AON" color="bg-globo-purple" />
         {overview.map((k) => (
           <Panel key={k.label} className="col-span-12 md:col-span-6 xl:col-span-3">
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{k.label}</p>
-              <k.icon className="h-4 w-4 text-primary" />
+              <span className={`flex h-8 w-8 items-center justify-center rounded-md ${kpiChip[k.tone]}`}>
+                <k.icon className="h-4 w-4" />
+              </span>
             </div>
             <p className="mt-3 text-4xl font-semibold tracking-tight text-foreground">{fmt(k.value)}</p>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{k.desc}</p>
@@ -233,21 +244,41 @@ function Dashboard() {
         ))}
 
         {/* Block 2 */}
-        <SectionTitle n="02" title="Fluxo da Jornada" sub="Contatos por atividade" />
+        <SectionTitle n="02" title="Fluxo da Jornada" sub="Contatos por atividade" color="bg-globo-pink" />
         <Panel className="col-span-12 xl:col-span-8" title="Contatos por etapa">
           <div className="space-y-1.5">
-            {flow.map((f, i) => (
-              <div key={i} className="grid grid-cols-12 items-center gap-3 text-sm">
-                <span className="col-span-1 text-right text-xs tabular-nums text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
-                <span className={`col-span-3 ${f.kind === "email" || f.kind === "entry" ? "font-semibold text-foreground" : "text-muted-foreground"}`}>{f.step}</span>
-                <div className="col-span-6 h-5 rounded-sm bg-muted">
-                  <div
-                    className={`h-5 rounded-sm ${f.kind === "email" || f.kind === "entry" ? "bg-primary" : f.kind === "end" ? "bg-warning" : "bg-primary/35"}`}
-                    style={{ width: `${(f.v / maxFlow) * 100}%` }}
-                  />
+            {flow.map((f, i) => {
+              const emailIdx = flow.slice(0, i).filter((x) => x.kind === "email").length;
+              const barStyle =
+                f.kind === "email"
+                  ? { background: emailColors[emailIdx] }
+                  : f.kind === "entry"
+                    ? { background: "var(--color-foreground)" }
+                    : f.kind === "end"
+                      ? { background: "var(--color-warning)" }
+                      : { background: "var(--color-muted-foreground)", opacity: 0.25 };
+              return (
+                <div key={i} className="grid grid-cols-12 items-center gap-3 text-sm">
+                  <span className="col-span-1 text-right text-xs tabular-nums text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
+                  <span className={`col-span-3 ${f.kind === "email" || f.kind === "entry" ? "font-semibold text-foreground" : "text-muted-foreground"}`}>{f.step}</span>
+                  <div className="col-span-6 h-5 rounded-sm bg-muted">
+                    <div className="h-5 rounded-sm" style={{ width: `${(f.v / maxFlow) * 100}%`, ...barStyle }} />
+                  </div>
+                  <span className="col-span-2 text-right font-medium tabular-nums text-foreground">{fmt(f.v)}</span>
                 </div>
-                <span className="col-span-2 text-right font-medium tabular-nums text-foreground">{fmt(f.v)}</span>
-              </div>
+              );
+            })}
+          </div>
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-t border-border pt-3 text-[11px] text-muted-foreground">
+            {[
+              ["Entrada", "var(--color-foreground)"],
+              ["E-mails (cada cor é um envio)", "var(--globo-purple)"],
+              ["Aguardando / Validação do MQL", "var(--color-muted-foreground)"],
+              ["Saída sem conversão", "var(--color-warning)"],
+            ].map(([label, color]) => (
+              <span key={label} className="flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-sm" style={{ background: color }} /> {label}
+              </span>
             ))}
           </div>
         </Panel>
@@ -282,11 +313,11 @@ function Dashboard() {
         </div>
 
         {/* Peças */}
-        <SectionTitle n="02.1" title="Peças da Jornada" sub="Os 5 e-mails enviados" />
+        <SectionTitle n="02.1" title="Peças da Jornada" sub="Os 5 e-mails enviados" color="bg-globo-orange" />
         <EmailGallery pieces={pieces} />
 
         {/* Block 3 */}
-        <SectionTitle n="03" title="Performance dos Emails" sub="Resultados operacionais dos disparos" />
+        <SectionTitle n="03" title="Performance dos Emails" sub="Resultados operacionais dos disparos" color="bg-globo-blue" />
         <Panel className="col-span-12 overflow-x-auto" title="Comparativo por e-mail">
           <table className="w-full text-sm">
             <thead>
@@ -355,7 +386,7 @@ function Dashboard() {
         </Panel>
 
         {/* Block 4 */}
-        <SectionTitle n="04" title="Consolidado" sub="Total da jornada" />
+        <SectionTitle n="04" title="Consolidado" sub="Total da jornada" color="bg-globo-purple" />
         <div className="col-span-12 grid grid-cols-2 gap-5 md:grid-cols-5">
           {consolidated.map((c) => (
             <Panel key={c.label}>
@@ -366,7 +397,7 @@ function Dashboard() {
         </div>
 
         {/* Block 5 */}
-        <SectionTitle n="05" title="Principais Insights" />
+        <SectionTitle n="05" title="Principais Insights" color="bg-globo-pink" />
         <div className="col-span-12 grid gap-5 md:grid-cols-2 xl:grid-cols-5">
           {insights.map((i) => (
             <Panel key={i.title}>

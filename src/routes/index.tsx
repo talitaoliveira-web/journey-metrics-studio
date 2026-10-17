@@ -273,9 +273,9 @@ function Dashboard() {
               <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
               <div>
                 <p className="text-sm font-semibold text-foreground">Observação técnica</p>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  Os volumes representam os contatos que passaram por cada atividade da jornada. Como existem Decision Splits, Waits, Joins e critérios de saída, esses valores não representam um funil linear.
-                </p>
+                 <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                   Os volumes representam os contatos que passaram por cada etapa da jornada. Como existem validações do MQL, intervalos entre envios e critérios de saída, esses valores não representam um funil linear.
+                 </p>
               </div>
             </div>
           </Panel>

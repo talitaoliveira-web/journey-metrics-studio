@@ -221,7 +221,7 @@ function Dashboard() {
               ["Resultado", "Audiência qualificada e validada antes do 1º envio"],
             ].map(([t, d], i) => (
               <div key={t} className="rounded-md border border-border p-3">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-primary">{String(i + 1).padStart(2, "0")} · {t}</p>
+                <p className={`text-[11px] font-semibold uppercase tracking-wide ${["text-globo-blue", "text-globo-purple", "text-globo-pink", "text-globo-orange"][i % 4]}`}>{String(i + 1).padStart(2, "0")} · {t}</p>
                 <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{d}</p>
               </div>
             ))}
@@ -229,12 +229,14 @@ function Dashboard() {
         </Panel>
 
         {/* Block 1 */}
-        <SectionTitle n="01" title="Visão Geral da Jornada" sub="JNY_INBOUND_LEADS_AON" />
+        <SectionTitle n="01" title="Visão Geral da Jornada" sub="JNY_INBOUND_LEADS_AON" color="bg-globo-purple" />
         {overview.map((k) => (
           <Panel key={k.label} className="col-span-12 md:col-span-6 xl:col-span-3">
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{k.label}</p>
-              <k.icon className="h-4 w-4 text-primary" />
+              <span className={`flex h-8 w-8 items-center justify-center rounded-md ${kpiChip[k.tone]}`}>
+                <k.icon className="h-4 w-4" />
+              </span>
             </div>
             <p className="mt-3 text-4xl font-semibold tracking-tight text-foreground">{fmt(k.value)}</p>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{k.desc}</p>

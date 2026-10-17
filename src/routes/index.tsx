@@ -139,40 +139,40 @@ function Dashboard() {
     <div className="min-h-screen bg-background">
       <div className="mx-auto grid max-w-[1600px] grid-cols-12 gap-5 px-10 py-10">
         {/* Header */}
-        <header className="col-span-12 flex flex-wrap items-end justify-between gap-6 border-b border-border pb-6">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Globo • CRM • WPP Commerce</p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">Jornada inbound AON</h1>
-            <p className="mt-1 text-base text-muted-foreground">
-              Salesforce Marketing Cloud
-            </p>
-          </div>
-          <div className="flex flex-wrap items-end gap-3">
+        <header className="col-span-12 overflow-hidden rounded-2xl globo-gradient p-8 text-primary-foreground shadow-lg">
+          <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Data de início</label>
-              <div className="flex h-9 items-center gap-2 rounded-md border border-border bg-card px-3 text-sm">
-                <Calendar className="h-4 w-4 text-muted-foreground" /> 26/08/2026
-              </div>
+              <p className="text-xs font-medium uppercase tracking-widest text-primary-foreground/70">Globo • CRM • WPP Commerce</p>
+              <h1 className="mt-2 text-4xl font-bold tracking-tight">Jornada inbound AON</h1>
+              <p className="mt-1 text-base text-primary-foreground/80">Salesforce Marketing Cloud • JNY_INBOUND_LEADS_AON</p>
             </div>
-            <div>
-              <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Email</label>
-              <div className="flex h-9 items-center gap-2 rounded-md border border-border bg-card px-3 text-sm">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <select value={selected} onChange={(e) => setSelected(e.target.value)} className="bg-transparent outline-none">
-                  <option value="all">Todos</option>
-                  {emails.map((e) => <option key={e.email} value={e.email}>{e.email}</option>)}
-                </select>
+            <div className="flex flex-wrap items-end gap-3">
+              <div>
+                <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-primary-foreground/70">Data de início</label>
+                <div className="flex h-9 items-center gap-2 rounded-md border border-primary-foreground/25 bg-primary-foreground/10 px-3 text-sm">
+                  <Calendar className="h-4 w-4 text-primary-foreground/70" /> 26/08/2026
+                </div>
               </div>
-            </div>
-            <div className="text-right">
-              <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Última atualização</p>
-              <p className="mt-1 text-sm font-medium text-foreground">16/10/2026 • 15:30</p>
+              <div>
+                <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-primary-foreground/70">Email</label>
+                <div className="flex h-9 items-center gap-2 rounded-md border border-primary-foreground/25 bg-primary-foreground/10 px-3 text-sm">
+                  <Mail className="h-4 w-4 text-primary-foreground/70" />
+                  <select value={selected} onChange={(e) => setSelected(e.target.value)} className="bg-transparent outline-none">
+                    <option value="all">Todos</option>
+                    {emails.map((e) => <option key={e.email} value={e.email}>{e.email}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-[11px] font-medium uppercase tracking-wide text-primary-foreground/70">Última atualização</p>
+                <p className="mt-1 text-sm font-medium">16/10/2026 • 15:30</p>
+              </div>
             </div>
           </div>
         </header>
 
         {/* Block 0 - Context */}
-        <SectionTitle n="00" title="Contexto da Jornada" sub="Objetivo, lógica e cadência" />
+        <SectionTitle n="00" title="Contexto da Jornada" sub="Objetivo, lógica e cadência" color="bg-globo-blue" />
         <Panel className="col-span-12 xl:col-span-7" title="Objetivo">
           <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
             <p>Qualificar novos leads, estimular o preenchimento dos dados e atualizar a base de CRM, principalmente com o <span className="font-semibold text-foreground">CNPJ da empresa</span>. Quanto mais dados obtidos, melhor entendemos o lead para direcioná-lo a ações de relacionamento e oportunidades comerciais.</p>

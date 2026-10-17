@@ -345,6 +345,18 @@ function Dashboard() {
           </table>
         </Panel>
 
+        <Panel className="col-span-12">
+          <div className="flex gap-3">
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <div>
+              <p className="text-sm font-semibold text-foreground">Por que os envios diferem do fluxo?</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                O fluxo da jornada mostra quantos contatos chegaram a cada etapa, enquanto esta tabela mostra os disparos efetivamente realizados até a extração dos dados. Como o envio usa Einstein Send Time Optimization, os disparos se distribuem ao longo do tempo no horário ideal de cada contato. Por isso, parte dos contatos que já chegou à etapa ainda estava aguardando o horário otimizado de envio, além de eventuais falhas por bounce ou supressão.
+              </p>
+            </div>
+          </div>
+        </Panel>
+
         <Panel className="col-span-12 lg:col-span-4" title="Sends por e-mail">
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={rows} margin={{ top: 20, right: 8, left: -16, bottom: 0 }}>

@@ -200,7 +200,7 @@ function Dashboard() {
             </p>
           </Panel>
           <Panel title="Cadência e horário de envio">
-            <p className="text-3xl font-semibold text-primary">6 dias</p>
+            <p className="globo-gradient bg-clip-text text-3xl font-semibold text-transparent">6 dias</p>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Intervalo entre envios: dá tempo ao lead para consumir o conteúdo e agir, mantendo a marca presente sem excesso de contatos.</p>
             <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
               <span className="font-semibold text-foreground">Einstein Send Time Optimization (STO):</span> o horário de disparo de cada e-mail é definido automaticamente por inteligência preditiva, aumentando a chance de abertura e engajamento de cada contato.

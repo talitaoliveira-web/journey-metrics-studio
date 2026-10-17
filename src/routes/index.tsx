@@ -35,16 +35,25 @@ export const Route = createFileRoute("/")({
   component: Dashboard,
 });
 
-const BLUE = "var(--color-primary)";
+const BLUE = "var(--globo-blue)";
 const fmt = (n: number) => n.toLocaleString("pt-BR");
 const pct = (n: number) => n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
 
 const overview = [
-  { icon: Database, label: "Base da Data Extension", value: 7425, desc: "Contatos elegíveis disponíveis na base de origem." },
-  { icon: LogIn, label: "Entradas na Jornada", value: 1923, desc: "Contatos que iniciaram a jornada no período." },
-  { icon: Send, label: "Total de Envios", value: 3366, desc: "E-mails disparados ao longo das 5 comunicações." },
-  { icon: Target, label: "MQL", value: 546, desc: "Leads qualificados pelo marketing." },
+  { icon: Database, label: "Base da Data Extension", value: 7425, desc: "Contatos elegíveis disponíveis na base de origem.", tone: "blue" },
+  { icon: LogIn, label: "Entradas na Jornada", value: 1923, desc: "Contatos que iniciaram a jornada no período.", tone: "purple" },
+  { icon: Send, label: "Total de Envios", value: 3366, desc: "E-mails disparados ao longo das 5 comunicações.", tone: "pink" },
+  { icon: Target, label: "MQL", value: 546, desc: "Leads qualificados pelo marketing.", tone: "orange" },
 ];
+
+const kpiChip: Record<string, string> = {
+  blue: "bg-globo-blue/10 text-globo-blue",
+  purple: "bg-globo-purple/10 text-globo-purple",
+  pink: "bg-globo-pink/10 text-globo-pink",
+  orange: "bg-globo-orange/10 text-globo-orange",
+};
+
+const emailColors = ["var(--globo-blue)", "var(--globo-purple)", "var(--globo-pink)", "var(--globo-orange)", "var(--color-success)"];
 
 const flow: { step: string; v: number; kind: "entry" | "email" | "wait" | "split" | "end" }[] = [
   { step: "Entradas", v: 1923, kind: "entry" },
@@ -98,11 +107,11 @@ const insights = [
 const toneText: Record<string, string> = { primary: "text-primary", success: "text-success", warning: "text-warning" };
 const toneBg: Record<string, string> = { primary: "bg-primary-soft text-primary", success: "bg-success-soft text-success", warning: "bg-warning-soft text-warning" };
 
-function SectionTitle({ n, title, sub }: { n: string; title: string; sub?: string }) {
+function SectionTitle({ n, title, sub, color = "bg-globo-blue" }: { n: string; title: string; sub?: string; color?: string }) {
   return (
     <div className="col-span-12 mt-4 flex items-end justify-between border-b border-border pb-3">
-      <div className="flex items-baseline gap-3">
-        <span className="text-xs font-semibold tracking-widest text-primary">{n}</span>
+      <div className="flex items-center gap-3">
+        <span className={`flex h-7 min-w-9 items-center justify-center rounded-md px-1.5 text-xs font-bold text-primary-foreground ${color}`}>{n}</span>
         <h2 className="text-lg font-semibold text-foreground">{title}</h2>
       </div>
       {sub && <p className="text-xs text-muted-foreground">{sub}</p>}

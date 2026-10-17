@@ -244,21 +244,41 @@ function Dashboard() {
         ))}
 
         {/* Block 2 */}
-        <SectionTitle n="02" title="Fluxo da Jornada" sub="Contatos por atividade" />
+        <SectionTitle n="02" title="Fluxo da Jornada" sub="Contatos por atividade" color="bg-globo-pink" />
         <Panel className="col-span-12 xl:col-span-8" title="Contatos por etapa">
           <div className="space-y-1.5">
-            {flow.map((f, i) => (
-              <div key={i} className="grid grid-cols-12 items-center gap-3 text-sm">
-                <span className="col-span-1 text-right text-xs tabular-nums text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
-                <span className={`col-span-3 ${f.kind === "email" || f.kind === "entry" ? "font-semibold text-foreground" : "text-muted-foreground"}`}>{f.step}</span>
-                <div className="col-span-6 h-5 rounded-sm bg-muted">
-                  <div
-                    className={`h-5 rounded-sm ${f.kind === "email" || f.kind === "entry" ? "bg-primary" : f.kind === "end" ? "bg-warning" : "bg-primary/35"}`}
-                    style={{ width: `${(f.v / maxFlow) * 100}%` }}
-                  />
+            {flow.map((f, i) => {
+              const emailIdx = flow.slice(0, i).filter((x) => x.kind === "email").length;
+              const barStyle =
+                f.kind === "email"
+                  ? { background: emailColors[emailIdx] }
+                  : f.kind === "entry"
+                    ? { background: "var(--color-foreground)" }
+                    : f.kind === "end"
+                      ? { background: "var(--color-warning)" }
+                      : { background: "var(--color-muted-foreground)", opacity: 0.25 };
+              return (
+                <div key={i} className="grid grid-cols-12 items-center gap-3 text-sm">
+                  <span className="col-span-1 text-right text-xs tabular-nums text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
+                  <span className={`col-span-3 ${f.kind === "email" || f.kind === "entry" ? "font-semibold text-foreground" : "text-muted-foreground"}`}>{f.step}</span>
+                  <div className="col-span-6 h-5 rounded-sm bg-muted">
+                    <div className="h-5 rounded-sm" style={{ width: `${(f.v / maxFlow) * 100}%`, ...barStyle }} />
+                  </div>
+                  <span className="col-span-2 text-right font-medium tabular-nums text-foreground">{fmt(f.v)}</span>
                 </div>
-                <span className="col-span-2 text-right font-medium tabular-nums text-foreground">{fmt(f.v)}</span>
-              </div>
+              );
+            })}
+          </div>
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-t border-border pt-3 text-[11px] text-muted-foreground">
+            {[
+              ["Entrada", "var(--color-foreground)"],
+              ["E-mails (cada cor é um envio)", "var(--globo-purple)"],
+              ["Aguardando / Validação do MQL", "var(--color-muted-foreground)"],
+              ["Saída sem conversão", "var(--color-warning)"],
+            ].map(([label, color]) => (
+              <span key={label} className="flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-sm" style={{ background: color }} /> {label}
+              </span>
             ))}
           </div>
         </Panel>
@@ -293,11 +313,11 @@ function Dashboard() {
         </div>
 
         {/* Peças */}
-        <SectionTitle n="02.1" title="Peças da Jornada" sub="Os 5 e-mails enviados" />
+        <SectionTitle n="02.1" title="Peças da Jornada" sub="Os 5 e-mails enviados" color="bg-globo-orange" />
         <EmailGallery pieces={pieces} />
 
         {/* Block 3 */}
-        <SectionTitle n="03" title="Performance dos Emails" sub="Resultados operacionais dos disparos" />
+        <SectionTitle n="03" title="Performance dos Emails" sub="Resultados operacionais dos disparos" color="bg-globo-blue" />
         <Panel className="col-span-12 overflow-x-auto" title="Comparativo por e-mail">
           <table className="w-full text-sm">
             <thead>
@@ -366,7 +386,7 @@ function Dashboard() {
         </Panel>
 
         {/* Block 4 */}
-        <SectionTitle n="04" title="Consolidado" sub="Total da jornada" />
+        <SectionTitle n="04" title="Consolidado" sub="Total da jornada" color="bg-globo-purple" />
         <div className="col-span-12 grid grid-cols-2 gap-5 md:grid-cols-5">
           {consolidated.map((c) => (
             <Panel key={c.label}>
@@ -377,7 +397,7 @@ function Dashboard() {
         </div>
 
         {/* Block 5 */}
-        <SectionTitle n="05" title="Principais Insights" />
+        <SectionTitle n="05" title="Principais Insights" color="bg-globo-pink" />
         <div className="col-span-12 grid gap-5 md:grid-cols-2 xl:grid-cols-5">
           {insights.map((i) => (
             <Panel key={i.title}>

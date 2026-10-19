@@ -140,7 +140,7 @@ export function parseJourneySheets(tabs: Partial<Record<keyof typeof SHEET_TABS,
       const name = String(row[0] ?? "").trim();
       const nums = row.slice(1, 9).map(parseNumber);
       if (!name || nums.length < 8 || nums.some((x) => x === null)) continue;
-      const [sends, openRate, uniqueOpens, clicks, ctr, ctor, bounce, unsub] = nums as number[];
+      const [sends, openRate, uniqueOpens, clicks, ctr, ctor, bounce, unsub] = nums as [number, number, number, number, number, number, number, number];
       list.push({ email: name, sends, openRate, uniqueOpens, clicks, ctr, ctor, bounce, unsub });
     }
     if (list.length) { data.emails = list; loaded.push(SHEET_TABS.emails); }
@@ -174,6 +174,6 @@ export function templateRows(d: JourneyData = defaultJourney): Record<keyof type
 export function extractSpreadsheetId(input: string): string | null {
   const s = input.trim();
   const m = s.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
-  if (m) return m[1];
+  if (m?.[1]) return m[1];
   return /^[a-zA-Z0-9_-]{20,}$/.test(s) ? s : null;
 }

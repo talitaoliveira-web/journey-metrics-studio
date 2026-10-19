@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep email artwork previews and their accessible zoom dialog in a dedicated gallery component, so compact previews and full-image inspection stay consistent.
+- Journey metrics come from src/lib/journey-data.ts defaults, optionally overridden by the builder's own Google Sheet (server fns in src/lib/sheets.functions.ts); missing tabs fall back to defaults so the original report numbers never silently change.

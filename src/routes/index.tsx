@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { EmailGallery } from "@/components/email-gallery";
+import { SheetSource } from "@/components/sheet-source";
+import { defaultJourney, type JourneyData, type Overview } from "@/lib/journey-data";
 import {
   Bar, BarChart, CartesianGrid, LabelList, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
@@ -39,11 +41,11 @@ const BLUE = "var(--globo-blue)";
 const fmt = (n: number) => n.toLocaleString("pt-BR");
 const pct = (n: number) => n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
 
-const overview = [
-  { icon: Database, label: "Base da Data Extension", value: 7425, desc: "Contatos elegíveis disponíveis na base de origem.", tone: "blue" },
-  { icon: LogIn, label: "Entradas na Jornada", value: 1923, desc: "Contatos que iniciaram a jornada no período.", tone: "purple" },
-  { icon: Send, label: "Total de Envios", value: 3366, desc: "E-mails disparados ao longo das 5 comunicações.", tone: "pink" },
-  { icon: Target, label: "MQL", value: 546, desc: "Leads qualificados pelo marketing.", tone: "orange" },
+const overviewMeta: { key: keyof Overview; icon: typeof Database; label: string; desc: string; tone: string }[] = [
+  { key: "base", icon: Database, label: "Base da Data Extension", desc: "Contatos elegíveis disponíveis na base de origem.", tone: "blue" },
+  { key: "entradas", icon: LogIn, label: "Entradas na Jornada", desc: "Contatos que iniciaram a jornada no período.", tone: "purple" },
+  { key: "envios", icon: Send, label: "Total de Envios", desc: "E-mails disparados ao longo das comunicações.", tone: "pink" },
+  { key: "mql", icon: Target, label: "MQL", desc: "Leads qualificados pelo marketing.", tone: "orange" },
 ];
 
 const kpiChip: Record<string, string> = {
@@ -55,46 +57,8 @@ const kpiChip: Record<string, string> = {
 
 const emailColors = ["var(--globo-blue)", "var(--globo-purple)", "var(--globo-pink)", "var(--globo-orange)", "var(--color-success)"];
 
-const flow: { step: string; v: number; kind: "entry" | "email" | "wait" | "split" | "end" }[] = [
-  { step: "Entradas", v: 1923, kind: "entry" },
-  { step: "Email 01", v: 1923, kind: "email" },
-  { step: "Aguardando próximo envio", v: 1899, kind: "wait" },
-  { step: "Validação do MQL", v: 1646, kind: "split" },
-  { step: "Email 02", v: 1188, kind: "email" },
-  { step: "Aguardando próximo envio", v: 1098, kind: "wait" },
-  { step: "Validação do MQL", v: 376, kind: "split" },
-  { step: "Email 03", v: 867, kind: "email" },
-  { step: "Aguardando próximo envio", v: 862, kind: "wait" },
-  { step: "Validação do MQL", v: 692, kind: "split" },
-  { step: "Email 04", v: 573, kind: "email" },
-  { step: "Aguardando próximo envio", v: 573, kind: "wait" },
-  { step: "Validação do MQL", v: 483, kind: "split" },
-  { step: "Email 05", v: 483, kind: "email" },
-  { step: "Aguardando próximo envio", v: 470, kind: "wait" },
-  { step: "Última validação do MQL", v: 352, kind: "split" },
-  { step: "Não Convertido", v: 352, kind: "end" },
-];
-
-const emails = [
-  { email: "EML 01", sends: 1252, openRate: 28.55, uniqueOpens: 338, clicks: 15, ctr: 1.27, ctor: 4.44, bounce: 5.43, unsub: 1.01 },
-  { email: "EML 02", sends: 786, openRate: 10.09, uniqueOpens: 79, clicks: 5, ctr: 0.64, ctor: 6.33, bounce: 0.38, unsub: 0.77 },
-  { email: "EML 03", sends: 570, openRate: 4.59, uniqueOpens: 26, clicks: 2, ctr: 0.35, ctor: 7.69, bounce: 0.53, unsub: 0.35 },
-  { email: "EML 04", sends: 418, openRate: 62.92, uniqueOpens: 263, clicks: 15, ctr: 3.59, ctor: 5.7, bounce: 0.0, unsub: 1.44 },
-  { email: "EML 05", sends: 340, openRate: 59.29, uniqueOpens: 201, clicks: 8, ctr: 2.36, ctor: 3.98, bounce: 0.29, unsub: 0.88 },
-];
-
-const consolidated = [
-  { label: "Total Sends", value: "3.366" },
-  { label: "Unique Opens", value: "907" },
-  { label: "Open Rate", value: "27,56%", tone: "primary" },
-  { label: "Unique Clicks", value: "45" },
-  { label: "CTR", value: "1,37%", tone: "primary" },
-  { label: "CTOR", value: "4,96%", tone: "primary" },
-  { label: "Bounces", value: "75" },
-  { label: "Bounce Rate", value: "2,23%", tone: "warning" },
-  { label: "Unsubscribes", value: "29" },
-  { label: "Unsubscribe Rate", value: "0,88%", tone: "warning" },
-];
+const consolidatedTone = (label: string) =>
+  /bounce rate|unsubscribe rate/i.test(label) ? "warning" : /open rate|^ctr$|^ctor$/i.test(label) ? "primary" : undefined;
 
 const insights = [
   { icon: GitBranch, title: "Fluxo da Jornada", tone: "primary", text: "A jornada apresenta redução gradual do volume de contatos ao longo das etapas, refletindo a evolução pelos diferentes caminhos configurados." },
@@ -132,8 +96,14 @@ const axis = { fontSize: 11, fill: "var(--color-muted-foreground)" };
 
 function Dashboard() {
   const [selected, setSelected] = useState("all");
+  const [sheetData, setSheetData] = useState<JourneyData | null>(null);
+  const [sheetInfo, setSheetInfo] = useState<{ title: string; at: Date } | null>(null);
+  const data = sheetData ?? defaultJourney;
+  const { flow, emails, consolidated } = data;
   const rows = selected === "all" ? emails : emails.filter((e) => e.email === selected);
-  const maxFlow = 1923;
+  const maxFlow = Math.max(1, ...flow.map((f) => f.v));
+  const lastEmail = [...flow].reverse().find((f) => f.kind === "email");
+  const lastSplit = [...flow].reverse().find((f) => f.kind === "split");
 
   return (
     <div className="min-h-screen bg-background">
@@ -165,11 +135,23 @@ function Dashboard() {
               </div>
               <div className="text-right">
                 <p className="text-[11px] font-medium uppercase tracking-wide text-primary-foreground/70">Última atualização</p>
-                <p className="mt-1 text-sm font-medium">16/10/2026 • 15:30</p>
+                <p className="mt-1 text-sm font-medium">
+                  {sheetInfo
+                    ? `${sheetInfo.at.toLocaleDateString("pt-BR")} • ${sheetInfo.at.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`
+                    : "16/10/2026 • 15:30"}
+                </p>
               </div>
             </div>
           </div>
         </header>
+
+        <SheetSource
+          onData={(d, info) => {
+            setSheetData(d);
+            setSheetInfo(info);
+            setSelected("all");
+          }}
+        />
 
         {/* Block 0 - Context */}
         <SectionTitle n="00" title="Contexto da Jornada" sub="Objetivo, lógica e cadência" color="bg-globo-blue" />
@@ -230,7 +212,7 @@ function Dashboard() {
 
         {/* Block 1 */}
         <SectionTitle n="01" title="Visão Geral da Jornada" sub="JNY_INBOUND_LEADS_AON" color="bg-globo-purple" />
-        {overview.map((k) => (
+        {overviewMeta.map((k) => (
           <Panel key={k.label} className="col-span-12 md:col-span-6 xl:col-span-3">
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{k.label}</p>
@@ -238,7 +220,7 @@ function Dashboard() {
                 <k.icon className="h-4 w-4" />
               </span>
             </div>
-            <p className="mt-3 text-4xl font-semibold tracking-tight text-foreground">{fmt(k.value)}</p>
+            <p className="mt-3 text-4xl font-semibold tracking-tight text-foreground">{fmt(data.overview[k.key])}</p>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{k.desc}</p>
           </Panel>
         ))}
@@ -286,11 +268,11 @@ function Dashboard() {
           <Panel title="Resumo do fluxo">
             <dl className="space-y-4 text-sm">
               {[
-                ["Entradas", "1.923"],
-                ["MQL preenchido", "546"],
-                ["Chegaram ao Email 05", "483"],
-                ["Última validação do MQL", "352"],
-                ["Etapas mapeadas", "17"],
+                ["Entradas", fmt(data.overview.entradas)],
+                ["MQL preenchido", fmt(data.overview.mql)],
+                [`Chegaram ao ${lastEmail?.step ?? "último e-mail"}`, fmt(lastEmail?.v ?? 0)],
+                ["Última validação do MQL", fmt(lastSplit?.v ?? 0)],
+                ["Etapas mapeadas", sheetData ? String(flow.length) : "17"],
               ].map(([a, b]) => (
                 <div key={a} className="flex items-center justify-between border-b border-border pb-3 last:border-0 last:pb-0">
                   <dt className="text-muted-foreground">{a}</dt>
@@ -400,12 +382,15 @@ function Dashboard() {
         {/* Block 4 */}
         <SectionTitle n="04" title="Consolidado" sub="Total da jornada" color="bg-globo-purple" />
         <div className="col-span-12 grid grid-cols-2 gap-5 md:grid-cols-5">
-          {consolidated.map((c) => (
-            <Panel key={c.label}>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{c.label}</p>
-              <p className={`mt-2 text-2xl font-semibold tracking-tight ${c.tone ? toneText[c.tone] : "text-foreground"}`}>{c.value}</p>
-            </Panel>
-          ))}
+          {consolidated.map((c) => {
+            const tone = consolidatedTone(c.label);
+            return (
+              <Panel key={c.label}>
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{c.label}</p>
+                <p className={`mt-2 text-2xl font-semibold tracking-tight ${tone ? toneText[tone] : "text-foreground"}`}>{c.isRate ? pct(c.value) : fmt(c.value)}</p>
+              </Panel>
+            );
+          })}
         </div>
 
         {/* Block 5 */}

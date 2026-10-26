@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { EmailGallery } from "@/components/email-gallery";
 import { SheetSource } from "@/components/sheet-source";
+import { LeadsSection } from "@/components/leads-section";
 import { defaultJourney, type JourneyData, type Overview } from "@/lib/journey-data";
 import {
   Bar, BarChart, CartesianGrid, LabelList, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
@@ -406,6 +407,8 @@ function Dashboard() {
             </Panel>
           ))}
         </div>
+
+        <LeadsSection envios={data.overview.envios} />
 
         {/* Block 6 */}
         <footer className="col-span-12 mt-6 border-t border-border pt-5">

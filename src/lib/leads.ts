@@ -21,7 +21,7 @@ export const toLead = (r: LeadRow): Lead => ({
 export function splitStatus(status: string): { etapa: string; motivo: string } {
   const m = status.match(/^(.*?)\s*e?\s*saiu da jornada após (E-mail \d+)$/i);
   if (!m) return { etapa: "Não informado", motivo: "Não informado" };
-  return { etapa: m[2], motivo: m[1].trim() || "Não informado" };
+  return { etapa: m[2] ?? "Não informado", motivo: (m[1] ?? "").trim() || "Não informado" };
 }
 
 export function consolidateLeads(leads: Lead[]) {

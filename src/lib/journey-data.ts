@@ -38,8 +38,8 @@ const KIND_LABELS: Record<FlowKind, string> = {
 export const EMAIL_HEADERS = ["Email", "Sends", "Open Rate", "Unique Opens", "Clicks", "CTR", "CTOR", "Bounce Rate", "Unsub Rate"];
 
 export const defaultJourney: JourneyData = {
-  // Base, entradas e MQL vêm da base de leads anexada (DE_JORNADALEADS_QUALIFICACAOMQL_AGO25); envios da performance.
-  overview: { base: 8395, entradas: 8385, envios: 3366, mql: 16 },
+  // Fonte oficial: planilha Jornada_inbound_AON_métricas.xlsx (abas Visao_Geral, Fluxo e Consolidado).
+  overview: { base: 7425, entradas: 1923, envios: 3366, mql: 546 },
   flow: [
     { step: "Entradas", v: 1923, kind: "entry" },
     { step: "Email 01", v: 1923, kind: "email" },
@@ -60,23 +60,24 @@ export const defaultJourney: JourneyData = {
     { step: "Não Convertido", v: 352, kind: "end" },
   ],
   emails: [
-    { email: "EML 01", sends: 1252, openRate: 28.55, uniqueOpens: 338, clicks: 15, ctr: 1.27, ctor: 4.44, bounce: 5.43, unsub: 1.01 },
-    { email: "EML 02", sends: 786, openRate: 10.09, uniqueOpens: 79, clicks: 5, ctr: 0.64, ctor: 6.33, bounce: 0.38, unsub: 0.77 },
-    { email: "EML 03", sends: 570, openRate: 4.59, uniqueOpens: 26, clicks: 2, ctr: 0.35, ctor: 7.69, bounce: 0.53, unsub: 0.35 },
-    { email: "EML 04", sends: 418, openRate: 62.92, uniqueOpens: 263, clicks: 15, ctr: 3.59, ctor: 5.7, bounce: 0.0, unsub: 1.44 },
-    { email: "EML 05", sends: 340, openRate: 59.29, uniqueOpens: 201, clicks: 8, ctr: 2.36, ctor: 3.98, bounce: 0.29, unsub: 0.88 },
+    { email: "EML 01", sends: 12613, openRate: 26.54, uniqueOpens: 3347, clicks: 157, ctr: 1.24, ctor: 4.69, bounce: 3.23, unsub: 0.86 },
+    { email: "EML 02", sends: 4510, openRate: 7.8, uniqueOpens: 352, clicks: 31, ctr: 0.69, ctor: 8.81, bounce: 0.33, unsub: 0.78 },
+    { email: "EML 03", sends: 4018, openRate: 5.23, uniqueOpens: 210, clicks: 15, ctr: 0.37, ctor: 7.14, bounce: 0.35, unsub: 0.5 },
+    { email: "EML 04", sends: 2593, openRate: 62.32, uniqueOpens: 1616, clicks: 71, ctr: 2.74, ctor: 4.39, bounce: 0.27, unsub: 1.27 },
+    { email: "EML 05", sends: 2466, openRate: 60.1, uniqueOpens: 1482, clicks: 60, ctr: 2.43, ctor: 4.05, bounce: 0.24, unsub: 0.65 },
   ],
+  // Consolidado derivado da soma ponderada dos 5 e-mails da aba Consolidado.
   consolidated: [
-    { label: "Total Sends", value: 3366, isRate: false },
-    { label: "Unique Opens", value: 907, isRate: false },
-    { label: "Open Rate", value: 27.56, isRate: true },
-    { label: "Unique Clicks", value: 45, isRate: false },
-    { label: "CTR", value: 1.37, isRate: true },
-    { label: "CTOR", value: 4.96, isRate: true },
-    { label: "Bounces", value: 75, isRate: false },
-    { label: "Bounce Rate", value: 2.23, isRate: true },
-    { label: "Unsubscribes", value: 29, isRate: false },
-    { label: "Unsubscribe Rate", value: 0.88, isRate: true },
+    { label: "Total Sends", value: 26200, isRate: false },
+    { label: "Unique Opens", value: 7007, isRate: false },
+    { label: "Open Rate", value: 26.74, isRate: true },
+    { label: "Unique Clicks", value: 334, isRate: false },
+    { label: "CTR", value: 1.27, isRate: true },
+    { label: "CTOR", value: 4.77, isRate: true },
+    { label: "Bounces", value: 449, isRate: false },
+    { label: "Bounce Rate", value: 1.71, isRate: true },
+    { label: "Unsubscribes", value: 213, isRate: false },
+    { label: "Unsubscribe Rate", value: 0.81, isRate: true },
   ],
 };
 

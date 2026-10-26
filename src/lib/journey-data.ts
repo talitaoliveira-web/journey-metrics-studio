@@ -38,7 +38,8 @@ const KIND_LABELS: Record<FlowKind, string> = {
 export const EMAIL_HEADERS = ["Email", "Sends", "Open Rate", "Unique Opens", "Clicks", "CTR", "CTOR", "Bounce Rate", "Unsub Rate"];
 
 export const defaultJourney: JourneyData = {
-  overview: { base: 7425, entradas: 1923, envios: 3366, mql: 546 },
+  // Base, entradas e MQL vêm da base de leads anexada (DE_JORNADALEADS_QUALIFICACAOMQL_AGO25); envios da performance.
+  overview: { base: 8395, entradas: 8385, envios: 3366, mql: 16 },
   flow: [
     { step: "Entradas", v: 1923, kind: "entry" },
     { step: "Email 01", v: 1923, kind: "email" },

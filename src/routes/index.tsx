@@ -58,9 +58,6 @@ const kpiChip: Record<string, string> = {
 
 const emailColors = ["var(--globo-blue)", "var(--globo-purple)", "var(--globo-pink)", "var(--globo-orange)", "var(--color-success)"];
 
-const consolidatedTone = (label: string) =>
-  /bounce rate|unsubscribe rate/i.test(label) ? "warning" : /open rate|^ctr$|^ctor$/i.test(label) ? "primary" : undefined;
-
 const insights = [
   { icon: GitBranch, title: "Fluxo da Jornada", tone: "primary", text: "A jornada apresenta redução gradual do volume de contatos ao longo das etapas, refletindo a evolução pelos diferentes caminhos configurados." },
   { icon: TrendingUp, title: "Performance", tone: "success", text: "Os e-mails 4 e 5 apresentaram as maiores taxas de abertura da jornada." },
@@ -69,7 +66,6 @@ const insights = [
   { icon: Activity, title: "Monitoramento", tone: "primary", text: "Recomenda-se acompanhar continuamente os principais KPIs para apoiar otimizações futuras da jornada." },
 ];
 
-const toneText: Record<string, string> = { primary: "text-primary", success: "text-success", warning: "text-warning" };
 const toneBg: Record<string, string> = { primary: "bg-primary-soft text-primary", success: "bg-success-soft text-success", warning: "bg-warning-soft text-warning" };
 
 function SectionTitle({ n, title, sub, color = "bg-globo-blue" }: { n: string; title: string; sub?: string; color?: string }) {
@@ -100,7 +96,7 @@ function Dashboard() {
   const [sheetData, setSheetData] = useState<JourneyData | null>(null);
   const [sheetInfo, setSheetInfo] = useState<{ title: string; at: Date } | null>(null);
   const data = sheetData ?? defaultJourney;
-  const { flow, emails, consolidated } = data;
+  const { flow, emails } = data;
   const rows = selected === "all" ? emails : emails.filter((e) => e.email === selected);
   const maxFlow = Math.max(1, ...flow.map((f) => f.v));
   const lastEmail = [...flow].reverse().find((f) => f.kind === "email");
@@ -381,21 +377,7 @@ function Dashboard() {
         </Panel>
 
         {/* Block 4 */}
-        <SectionTitle n="04" title="Consolidado" sub="Total da jornada" color="bg-globo-purple" />
-        <div className="col-span-12 grid grid-cols-2 gap-5 md:grid-cols-5">
-          {consolidated.map((c) => {
-            const tone = consolidatedTone(c.label);
-            return (
-              <Panel key={c.label}>
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{c.label}</p>
-                <p className={`mt-2 text-2xl font-semibold tracking-tight ${tone ? toneText[tone] : "text-foreground"}`}>{c.isRate ? pct(c.value) : fmt(c.value)}</p>
-              </Panel>
-            );
-          })}
-        </div>
-
-        {/* Block 5 */}
-        <SectionTitle n="05" title="Principais Insights" color="bg-globo-pink" />
+        <SectionTitle n="04" title="Principais Insights" color="bg-globo-pink" />
         <div className="col-span-12 grid gap-5 md:grid-cols-2 xl:grid-cols-5">
           {insights.map((i) => (
             <Panel key={i.title}>
@@ -412,7 +394,7 @@ function Dashboard() {
 
         {/* Block 6 */}
         <footer className="col-span-12 mt-6 border-t border-border pt-5">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">06 · Observações Técnicas</p>
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">05 · Observações Técnicas</p>
           <p className="mt-2 max-w-5xl text-xs leading-relaxed text-muted-foreground">
             As métricas de Fluxo da Jornada representam os contatos que passaram pelas atividades configuradas no Journey Builder. As métricas de Performance dos E-mails representam os resultados operacionais dos disparos. Esses conjuntos possuem granularidades distintas e não devem ser comparados diretamente.
           </p>

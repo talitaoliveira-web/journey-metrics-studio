@@ -390,7 +390,7 @@ function Dashboard() {
           ))}
         </div>
 
-        <LeadsSection envios={data.overview.envios} />
+        <LeadsSection />
 
         {/* Block 6 */}
         <footer className="col-span-12 mt-6 border-t border-border pt-5">

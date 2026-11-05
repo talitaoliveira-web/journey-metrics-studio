@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Loader2, Search, Users, LogIn, Send, Target, Building2, MessageSquare, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { consolidateLeads, toLead, type Lead, type LeadRow } from "@/lib/leads";
 
 const fmt = (n: number) => n.toLocaleString("pt-BR");
@@ -37,7 +37,7 @@ function Table({ head, rows }: { head: string[]; rows: (string | number)[][] }) 
   );
 }
 
-export function LeadsSection({ envios }: { envios: number }) {
+export function LeadsSection() {
   const [leads, setLeads] = useState<Lead[] | null>(null);
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("Todas");
@@ -64,40 +64,8 @@ export function LeadsSection({ envios }: { envios: number }) {
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE));
   const view = filtered.slice(page * PAGE, page * PAGE + PAGE);
 
-  const kpis = [
-    { label: "Total da base", v: c.base, icon: Users, tone: "bg-globo-blue" },
-    { label: "Entradas na jornada", v: c.entradas, icon: LogIn, tone: "bg-globo-purple" },
-    { label: "Total de envios", v: envios, icon: Send, tone: "bg-globo-pink" },
-    { label: "MQL (enviados ao CRM)", v: c.mql, icon: Target, tone: "bg-globo-orange" },
-    { label: "Preencheram CNPJ", v: c.cnpj, icon: Building2, tone: "bg-globo-blue" },
-    { label: "Responderam Q004", v: c.q004, icon: MessageSquare, tone: "bg-globo-purple" },
-    { label: "Responderam Q005", v: c.q005, icon: MessageSquare, tone: "bg-globo-pink" },
-  ];
-
   return (
     <>
-      <Title n="07" title="Consolidação da Base de Leads" sub="DE_JORNADALEADS_QUALIFICACAOMQL_AGO25" color="bg-globo-blue" />
-      <div className="col-span-12 grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-7">
-        {kpis.map((k) => (
-          <div key={k.label} className="rounded-md border border-border bg-card p-4">
-            <span className={`mb-2 inline-flex h-7 w-7 items-center justify-center rounded-md text-primary-foreground ${k.tone}`}><k.icon className="h-4 w-4" /></span>
-            <p className="text-2xl font-bold text-foreground">{fmt(k.v)}</p>
-            <p className="text-[11px] text-muted-foreground">{k.label}</p>
-          </div>
-        ))}
-      </div>
-      <div className="col-span-12 rounded-md border border-border bg-card p-4">
-        <p className="mb-2 text-xs font-semibold text-foreground">Leads que saíram da jornada por etapa</p>
-        <div className="flex flex-wrap gap-2">
-          {c.saidasPorEtapa.map((s) => (
-            <span key={s.etapa} className="rounded-md bg-muted px-3 py-1.5 text-xs text-foreground"><b>{s.etapa}</b>: {fmt(s.qtde)}</span>
-          ))}
-        </div>
-        <p className="mt-3 text-[11px] text-muted-foreground">
-          Total de envios vem da tabela de performance dos e-mails, pois a base de leads não traz esse campo. MQL aqui considera os leads com "Enviado ao CRM" igual a Sim.
-        </p>
-      </div>
-
       <Title n="08" title="Funil e Status da Jornada" sub="Quantidade por status de saída" color="bg-globo-purple" />
       <div className="col-span-12">
         <Table head={["StatusNaJornada", "EtapaSaida", "MotivoSaida", "Qtde"]} rows={c.funnel.map((f) => [f.status, f.etapa, f.motivo, f.qtde])} />

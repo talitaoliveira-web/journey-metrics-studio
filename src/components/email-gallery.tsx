@@ -3,15 +3,21 @@ import { ChevronLeft, ChevronRight, Expand, ZoomIn, ZoomOut, Scan } from "lucide
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
+import type { EmailRow } from "@/lib/journey-data";
+
 type EmailPiece = {
   id: string;
   img: { url: string };
   subject: string;
   pre: string;
   desc: string;
+  learning: string;
 };
 
-export function EmailGallery({ pieces }: { pieces: EmailPiece[] }) {
+const fmt = (value: number) => value.toLocaleString("pt-BR");
+const pct = (value: number) => `${value.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+
+export function EmailGallery({ pieces, metrics }: { pieces: EmailPiece[]; metrics: EmailRow[] }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [zoom, setZoom] = useState(100);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -26,13 +32,15 @@ export function EmailGallery({ pieces }: { pieces: EmailPiece[] }) {
   return (
     <>
       <div className="col-span-12 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
-        {pieces.map((piece, index) => (
+        {pieces.map((piece, index) => {
+          const row = metrics.find((item) => item.email === piece.id);
+          return (
+          <article key={piece.id} className="min-w-0 overflow-hidden rounded-md border border-border bg-card">
           <Button
-            key={piece.id}
             variant="outline"
             aria-label={`Ampliar ${piece.id}`}
             onClick={() => open(index)}
-            className="group h-auto min-w-0 flex-col items-stretch gap-0 overflow-hidden bg-card p-0 text-left shadow-none"
+            className="group h-auto w-full min-w-0 flex-col items-stretch gap-0 overflow-hidden rounded-none border-0 bg-card p-0 text-left shadow-none"
           >
             <div className="relative h-28 overflow-hidden border-b border-border bg-muted">
               <img src={piece.img.url} alt={`Prévia do ${piece.id}`} className="h-full w-full object-cover object-top" loading="lazy" />
@@ -45,7 +53,19 @@ export function EmailGallery({ pieces }: { pieces: EmailPiece[] }) {
               <p className="mt-1 line-clamp-2 min-h-10 whitespace-normal text-xs font-medium leading-5 text-foreground">{piece.subject}</p>
             </div>
           </Button>
-        ))}
+          <div className="border-t border-border px-3 pb-4 pt-3">
+            <p className="text-xs leading-5 text-muted-foreground">{piece.desc}</p>
+            {row ? <>
+              <p className="mb-2 mt-4 text-[10px] font-semibold uppercase text-primary">Fato · tracking do e-mail</p>
+              <dl className="grid grid-cols-2 gap-x-2 gap-y-3 text-xs">
+                {[["Envios", fmt(row.sends)], ["Abertura", pct(row.openRate)], ["Cliques", fmt(row.clicks)], ["CTR", pct(row.ctr)]].map(([label, value]) => <div key={label}><dt className="text-muted-foreground">{label}</dt><dd className="mt-1 font-semibold tabular-nums text-foreground">{value}</dd></div>)}
+              </dl>
+            </> : <p className="mt-3 text-xs text-muted-foreground">Sem indicadores correspondentes na fonte carregada.</p>}
+            <p className="mb-1 mt-4 text-[10px] font-semibold uppercase text-globo-purple">Aprendizado a investigar</p>
+            <p className="text-xs leading-5 text-muted-foreground">{piece.learning}</p>
+          </div>
+          </article>
+        );})}
       </div>
 
       <Dialog open={Boolean(active)} onOpenChange={(isOpen) => { if (!isOpen) setActiveIndex(null); }}>

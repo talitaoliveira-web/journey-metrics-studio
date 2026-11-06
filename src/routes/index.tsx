@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toLead, type Lead, type LeadRow } from "@/lib/leads";
 import { EmailGallery } from "@/components/email-gallery";
 import { SheetSource } from "@/components/sheet-source";
 import { LeadsSection } from "@/components/leads-section";
@@ -83,6 +84,10 @@ function Panel({ className = "", title, children }: { className?: string; title?
 const axis = { fontSize: 11, fill: "var(--color-muted-foreground)" };
 
 function Dashboard() {
+  const [leads, setLeads] = useState<Lead[] | null>(null);
+  useEffect(() => {
+    import("@/data/leads.json").then((module) => setLeads((module.default as LeadRow[]).map(toLead)));
+  }, []);
   const [selected, setSelected] = useState("all");
   const [sheetData, setSheetData] = useState<JourneyData | null>(null);
   const [sheetInfo, setSheetInfo] = useState<{ title: string; at: Date } | null>(null);
@@ -406,7 +411,10 @@ function Dashboard() {
           ))}
         </div>
 
-        <LeadsSection />
+        <SectionTitle n="03.1" title="Identificação dos Leads" color="bg-globo-blue" />
+        <LeadsSection leads={leads} section="identity" />
+        <SectionTitle n="03.2" title="Perguntas e Respostas" color="bg-globo-purple" />
+        <LeadsSection leads={leads} section="questions" />
 
         {/* Block 6 */}
         <footer className="col-span-12 mt-6 border-t border-border pt-5">

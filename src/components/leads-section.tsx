@@ -1,109 +1,61 @@
-import { useEffect, useMemo, useState } from "react";
-import { Loader2, Search, ChevronLeft, ChevronRight } from "lucide-react";
-import { consolidateLeads, toLead, type Lead, type LeadRow } from "@/lib/leads";
+import { useMemo, useState } from "react";
+import { Loader2, Search, ChevronLeft, ChevronRight, Contact, Building2, CircleHelp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { consolidateLeads, type Lead } from "@/lib/leads";
+import { documentSummary, percentage, questionSummary, selectIdentification, type Identification, type Question } from "@/lib/lead-analysis";
 
 const fmt = (n: number) => n.toLocaleString("pt-BR");
-const dash = (v: string) => v || "Não informado";
+const pct = (n: number) => `${n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
 const PAGE = 25;
-
-function Title({ n, title, sub, color }: { n: string; title: string; sub?: string; color: string }) {
-  return (
-    <div className="col-span-12 mt-4 flex items-end justify-between border-b border-border pb-3">
-      <div className="flex items-center gap-3">
-        <span className={`flex h-7 min-w-9 items-center justify-center rounded-md px-1.5 text-xs font-bold text-primary-foreground ${color}`}>{n}</span>
-        <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-      </div>
-      {sub && <p className="text-xs text-muted-foreground">{sub}</p>}
-    </div>
-  );
-}
-
+const questions: { key: Question; title: string; desc: string }[] = [
+  { key: "q004", title: "Q004 · Valor de mercado da empresa", desc: "Faixas declaradas pelos contatos, mantidas conforme o registro original." },
+  { key: "q005", title: "Q005 · Investimento em mídia", desc: "Faixas de investimento informadas, sem estimar valores dentro de cada faixa." },
+  { key: "q006", title: "Q006 · Aceita receber informações da Globo?", desc: "Preferência registrada. Uma resposta ausente não equivale a uma recusa." },
+];
 function Table({ head, rows }: { head: string[]; rows: (string | number)[][] }) {
-  return (
-    <div className="overflow-x-auto rounded-md border border-border bg-card">
-      <table className="w-full text-left text-xs">
-        <thead className="bg-muted text-muted-foreground">
-          <tr>{head.map((h) => <th key={h} className="whitespace-nowrap px-3 py-2 font-semibold">{h}</th>)}</tr>
-        </thead>
-        <tbody>
-          {rows.map((r, i) => (
-            <tr key={i} className="border-t border-border">
-              {r.map((c, j) => <td key={j} className="whitespace-nowrap px-3 py-2 text-foreground">{typeof c === "number" ? fmt(c) : c}</td>)}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+  return <div className="overflow-x-auto rounded-md border border-border bg-card"><table className="w-full text-left text-xs"><thead className="bg-muted text-muted-foreground"><tr>{head.map(h => <th key={h} className="px-3 py-3 font-semibold">{h}</th>)}</tr></thead><tbody>{rows.map((r, i) => <tr key={i} className="border-t border-border">{r.map((c, j) => <td key={j} className="px-3 py-3 text-foreground">{typeof c === "number" ? fmt(c) : c}</td>)}</tr>)}</tbody></table></div>;
 }
 
-export function LeadsSection() {
-  const [leads, setLeads] = useState<Lead[] | null>(null);
+export function LeadsSection({ leads, section }: { leads: Lead[] | null; section: "stages" | "identity" | "questions" | "insights" }) {
+  const [group, setGroup] = useState<Identification>("all");
   const [q, setQ] = useState("");
-  const [cat, setCat] = useState("Todas");
   const [page, setPage] = useState(0);
-
-  useEffect(() => {
-    import("@/data/leads.json").then((m) => setLeads((m.default as LeadRow[]).map(toLead)));
-  }, []);
-
-  const c = useMemo(() => (leads ? consolidateLeads(leads) : null), [leads]);
-  const filtered = useMemo(() => {
-    if (!leads) return [];
-    const s = q.trim().toLowerCase();
-    return leads.filter((l) => (cat === "Todas" || l.categoria === cat) &&
-      (!s || l.email.toLowerCase().includes(s) || l.empresa.toLowerCase().includes(s) || l.status.toLowerCase().includes(s)));
-  }, [leads, q, cat]);
-
-  if (!leads || !c) {
-    return <div className="col-span-12 flex items-center gap-2 py-8 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Carregando base de leads...</div>;
+  const segment = useMemo(() => selectIdentification(leads ?? [], group), [leads, group]);
+  if (!leads) return <p className="col-span-12 flex items-center gap-2 py-5 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" />Carregando registros para análise...</p>;
+  const docs = documentSummary(leads);
+  if (section === "stages") {
+    const statuses = consolidateLeads(leads).funnel;
+    return <details className="col-span-12 border-y border-border py-4"><summary className="cursor-pointer text-sm font-semibold text-foreground">Status registrados na base de contatos</summary><p className="my-3 text-xs leading-5 text-muted-foreground">Distribuição de {fmt(leads.length)} registros da exportação de contatos. É uma base distinta dos volumes por atividade acima; os status são transcritos da fonte, não regras inferidas de exclusão.</p><Table head={["Status registrado", "Etapa de saída", "Motivo registrado", "Registros"]} rows={statuses.map(f => [f.status, f.etapa, f.motivo, f.qtde])} /></details>;
   }
-
-  const withCnpj = leads.filter((l) => l.cnpj);
-  const answered = leads.filter((l) => l.q004 || l.q005);
-  const pages = Math.max(1, Math.ceil(filtered.length / PAGE));
-  const view = filtered.slice(page * PAGE, page * PAGE + PAGE);
-
-  return (
-    <>
-      <Title n="08" title="Funil e Status da Jornada" sub="Quantidade por status de saída" color="bg-globo-purple" />
-      <div className="col-span-12">
-        <Table head={["StatusNaJornada", "EtapaSaida", "MotivoSaida", "Qtde"]} rows={c.funnel.map((f) => [f.status, f.etapa, f.motivo, f.qtde])} />
-      </div>
-
-      <Title n="09" title="CNPJ Preenchido" sub={`${fmt(withCnpj.length)} leads`} color="bg-globo-pink" />
-      <div className="col-span-12">
-        <Table head={["Email", "Empresa", "CNPJ", "StatusNaJornada", "Q004", "Q005", "Q006", "LeadSource", "Campanha"]}
-          rows={withCnpj.map((l) => [l.email, l.empresa, l.cnpj, l.status, dash(l.q004), dash(l.q005), dash(l.q006), dash(l.leadSource), dash(l.campanha)])} />
-      </div>
-
-      <Title n="10" title="Respostas Q004 e Q005" sub={`${fmt(answered.length)} leads responderam`} color="bg-globo-orange" />
-      <div className="col-span-12">
-        <Table head={["Email", "Empresa", "CNPJ", "StatusNaJornada", "Q004", "Q005", "Q006"]}
-          rows={answered.map((l) => [l.email, l.empresa, dash(l.cnpj), l.status, dash(l.q004), dash(l.q005), dash(l.q006)])} />
-      </div>
-
-      <Title n="11" title="Tabela Principal de Leads" sub={`${fmt(filtered.length)} de ${fmt(leads.length)} leads`} color="bg-globo-blue" />
-      <div className="col-span-12 flex flex-wrap gap-2">
-        <label className="relative min-w-[240px] flex-1">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-          <input value={q} onChange={(e) => { setQ(e.target.value); setPage(0); }} placeholder="Buscar por e-mail, empresa ou status"
-            aria-label="Buscar leads" className="h-9 w-full rounded-md border border-input bg-background pl-9 pr-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring" />
-        </label>
-        <select value={cat} onChange={(e) => { setCat(e.target.value); setPage(0); }} aria-label="Categoria"
-          className="h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground">
-          {["Todas", "Empresa", "Visitante", "Estudante", "Não informado"].map((o) => <option key={o}>{o}</option>)}
-        </select>
-      </div>
-      <div className="col-span-12">
-        <Table head={["Email", "Empresa", "Categoria", "CNPJ", "CPF", "LeadSource", "Campanha", "CreatedDate", "DataEntradaJornada", "DataSaidaJornada", "StatusNaJornada", "SentToCRM", "SentToCRMDateTime", "AbriuEmail"]}
-          rows={view.map((l) => [l.email, l.empresa, l.categoria, dash(l.cnpj), dash(l.cpf), dash(l.leadSource), dash(l.campanha), dash(l.createdDate), dash(l.entrada), dash(l.saida), l.status, dash(l.sentToCrm), dash(l.sentToCrmAt), l.abriu])} />
-        <div className="mt-3 flex items-center justify-end gap-2 text-xs text-muted-foreground">
-          <button type="button" aria-label="Página anterior" disabled={page === 0} onClick={() => setPage(page - 1)} className="rounded-md border border-border p-1.5 disabled:opacity-40"><ChevronLeft className="h-4 w-4" /></button>
-          Página {page + 1} de {pages}
-          <button type="button" aria-label="Próxima página" disabled={page + 1 >= pages} onClick={() => setPage(page + 1)} className="rounded-md border border-border p-1.5 disabled:opacity-40"><ChevronRight className="h-4 w-4" /></button>
-        </div>
-      </div>
-    </>
-  );
+  if (section === "identity") {
+    const cards = [
+      { label: "CPF preenchido", count: docs.cpf, icon: Contact, color: "text-globo-blue", bg: "bg-globo-blue" },
+      { label: "CNPJ preenchido", count: docs.cnpj, icon: Building2, color: "text-globo-purple", bg: "bg-globo-purple" },
+      { label: "Não informado", count: docs.none, icon: CircleHelp, color: "text-muted-foreground", bg: "bg-muted-foreground" },
+    ];
+    const search = q.trim().toLowerCase();
+    const filtered = leads.filter(l => !search || l.email.toLowerCase().includes(search) || l.empresa.toLowerCase().includes(search));
+    const pages = Math.max(1, Math.ceil(filtered.length / PAGE));
+    return <>
+      <div className="col-span-12 flex flex-wrap items-baseline justify-between gap-2 border-l-2 border-globo-blue pl-4"><p className="text-sm text-muted-foreground">Documentos preenchidos na exportação de contatos, não validação de identidade ou conversão.</p><p className="text-sm font-semibold text-foreground">{fmt(docs.total)} registros analisados</p></div>
+      {cards.map(c => <article key={c.label} className="col-span-12 rounded-md border border-border bg-card p-5 md:col-span-4"><div className={`flex items-center justify-between ${c.color}`}><h3 className="text-sm font-semibold">{c.label}</h3><c.icon className="h-5 w-5" /></div><p className="mt-4 text-4xl font-semibold tabular-nums text-foreground">{fmt(c.count)}</p><p className={`mt-2 text-lg font-semibold ${c.color}`}>{pct(percentage(c.count, docs.total))}</p><div className="mt-4 h-2 overflow-hidden rounded-sm bg-muted" role="meter" aria-label={c.label} aria-valuenow={c.count} aria-valuemin={0} aria-valuemax={docs.total}><div className={`h-full ${c.bg}`} style={{ width: `${percentage(c.count, docs.total)}%` }} /></div><p className="mt-3 text-xs text-muted-foreground">Percentual sobre {fmt(docs.total)} registros</p></article>)}
+      <p className="col-span-12 text-xs leading-5 text-muted-foreground">{fmt(docs.identified)} registros têm ao menos um documento; {fmt(docs.both)} têm CPF e CNPJ e aparecem nos dois indicadores. Por isso, as três categorias não devem ser somadas. “Não informado” significa ausência de ambos os documentos. Estes {fmt(docs.total)} registros não substituem a base de {fmt(7425)} do resumo original.</p>
+      <details className="col-span-12 border-y border-border py-4"><summary className="cursor-pointer text-sm font-semibold text-foreground">Registros de identificação</summary><label className="relative my-4 block"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><input aria-label="Buscar registros" placeholder="Buscar e-mail ou empresa" value={q} onChange={e => { setQ(e.target.value); setPage(0); }} className="h-10 w-full rounded-md border border-input bg-background pl-9 pr-3 text-sm" /></label><Table head={["E-mail", "Empresa", "Categoria", "CPF", "CNPJ", "Status"]} rows={filtered.slice(page * PAGE, (page + 1) * PAGE).map(l => [l.email, l.empresa, l.categoria, l.cpf || "Não informado", l.cnpj || "Não informado", l.status])} /><div className="mt-3 flex items-center justify-end gap-3 text-xs text-muted-foreground"><Button variant="outline" size="icon" aria-label="Página anterior" disabled={page === 0} onClick={() => setPage(page - 1)}><ChevronLeft /></Button>Página {page + 1} de {pages}<Button variant="outline" size="icon" aria-label="Próxima página" disabled={page + 1 >= pages} onClick={() => setPage(page + 1)}><ChevronRight /></Button></div></details>
+    </>;
+  }
+  if (section === "questions") return <>
+    <p className="col-span-12 text-sm leading-6 text-muted-foreground">As respostas ajudam a descrever o perfil e as preferências declaradas. Cada quantidade e percentual usa todos os registros do grupo selecionado, incluindo respostas não informadas.</p>
+    <div className="col-span-12 flex flex-wrap gap-2" role="group" aria-label="Identificação das respostas">{([{ value: "all", label: "Todos" }, { value: "cpf", label: "CPF preenchido" }, { value: "cnpj", label: "CNPJ preenchido" }, { value: "none", label: "Não informado" }] as { value: Identification; label: string }[]).map(g => <Button key={g.value} variant={group === g.value ? "default" : "outline"} aria-pressed={group === g.value} onClick={() => setGroup(g.value)}>{g.label}</Button>)}</div>
+    <p className="col-span-12 text-xs text-muted-foreground">Grupo selecionado: <strong className="text-foreground">{fmt(segment.length)} registros</strong>. Registros com ambos os documentos participam das análises de CPF e CNPJ, sem duplicação dentro de cada grupo.</p>
+    {questions.map(question => {
+      const answers = questionSummary(segment, question.key);
+      const answered = segment.filter(l => l[question.key].trim()).length;
+      return <section key={question.key} className="col-span-12 min-w-0 border-t border-border pt-5 lg:col-span-4"><h3 className="text-base font-semibold text-foreground">{question.title}</h3><p className="mt-2 min-h-10 text-xs leading-5 text-muted-foreground">{question.desc}</p><p className="my-4 text-sm text-foreground"><strong>{fmt(answered)}</strong> com resposta · {pct(percentage(answered, segment.length))} do grupo</p><Table head={["Resposta registrada", "Qtd.", "% do grupo"]} rows={answers.map(a => [a.answer, a.count, pct(a.percent)])} />{!answers.length && <p className="py-4 text-xs text-muted-foreground">Nenhum registro neste grupo.</p>}<p className="mt-3 text-xs leading-5 text-muted-foreground">Base: {fmt(segment.length)} registros. Campos vazios aparecem como “Não informado”.</p></section>;
+    })}
+  </>;
+  const answered = leads.filter(l => l.q004.trim() || l.q005.trim() || l.q006.trim()).length;
+  return <>
+    <article className="col-span-12 border-l-2 border-globo-blue pl-4 md:col-span-6"><p className="text-[11px] font-semibold uppercase text-globo-blue">Fato · identificação</p><h3 className="mt-2 text-sm font-semibold">Preenchimento ainda restrito nesta base</h3><p className="mt-2 text-xs leading-5 text-muted-foreground">{fmt(docs.identified)} de {fmt(docs.total)} registros têm ao menos um documento ({pct(percentage(docs.identified, docs.total))}). Isso descreve cobertura cadastral, não uma taxa de conversão da jornada. Confirmar o período e a abrangência da exportação antes de avaliar o resultado.</p></article>
+    <article className="col-span-12 border-l-2 border-globo-purple pl-4 md:col-span-6"><p className="text-[11px] font-semibold uppercase text-globo-purple">Fato e oportunidade · respostas</p><h3 className="mt-2 text-sm font-semibold">Um recorte pequeno para conhecer o perfil</h3><p className="mt-2 text-xs leading-5 text-muted-foreground">{fmt(answered)} registros têm alguma resposta às três perguntas. A distribuição não representa automaticamente toda a base. Comparar respostas por documento e investigar os campos ausentes; ausência em Q006 não autoriza concluir recusa ou consentimento.</p></article>
+  </>;
 }

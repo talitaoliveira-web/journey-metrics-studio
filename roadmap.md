@@ -1,6 +1,8 @@
-# Aprimoramento da narrativa
+# Organização estratégica da jornada
 
-- [ ] Conectar resumo, fluxo e qualificação com explicações sem alterar os números.
-- [ ] Relacionar as cinco peças reais às métricas e aprendizados.
-- [ ] Identificar fatos, hipóteses e limites junto aos gráficos.
-- [ ] Verificar filtros, imagens e leitura em telas grandes e pequenas.
+- [ ] Ordenar as seis áreas solicitadas, usando Estágios da Jornada.
+- [ ] Destacar CPF, CNPJ, não informado e denominadores reais.
+- [ ] Separar Q004, Q005 e Q006, com segmentação por identificação.
+- [ ] Manter tracking e peças; indicar lacunas sem estimar entregas.
+- [ ] Concentrar insights e recomendações no final, preservando dados e integração.
+- [ ] Verificar contagens, filtros, imagens e leitura em telas grandes e pequenas.

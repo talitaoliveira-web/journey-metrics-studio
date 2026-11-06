@@ -36,7 +36,6 @@ export function consolidateLeads(leads: Lead[]) {
   return {
     base: leads.length,
     entradas: leads.filter((l) => l.entrada).length,
-    mql: leads.filter((l) => l.sentToCrm === "Sim").length,
     cnpj: leads.filter((l) => l.cnpj).length,
     q004: leads.filter((l) => l.q004).length,
     q005: leads.filter((l) => l.q005).length,

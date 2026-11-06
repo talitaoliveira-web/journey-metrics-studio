@@ -7,7 +7,7 @@ export type EmailRow = {
   email: string; sends: number; openRate: number; uniqueOpens: number; clicks: number;
   ctr: number; ctor: number; bounce: number; unsub: number;
 };
-export type Overview = { base: number; entradas: number; envios: number; mql: number };
+export type Overview = { base: number; entradas: number; envios: number };
 export type ConsolidatedItem = { label: string; value: number; isRate: boolean };
 
 export type JourneyData = {
@@ -28,7 +28,6 @@ export const OVERVIEW_KEYS: { key: keyof Overview; label: string }[] = [
   { key: "base", label: "Base da Data Extension" },
   { key: "entradas", label: "Entradas na Jornada" },
   { key: "envios", label: "Total de Envios" },
-  { key: "mql", label: "MQL" },
 ];
 
 const KIND_LABELS: Record<FlowKind, string> = {
@@ -39,7 +38,7 @@ export const EMAIL_HEADERS = ["Email", "Sends", "Open Rate", "Unique Opens", "Cl
 
 export const defaultJourney: JourneyData = {
   // Fonte oficial: planilha Jornada_inbound_AON_métricas.xlsx (abas Visao_Geral, Fluxo e Consolidado).
-  overview: { base: 7425, entradas: 1923, envios: 3366, mql: 546 },
+  overview: { base: 7425, entradas: 1923, envios: 3366 },
   flow: [
     { step: "Entradas", v: 1923, kind: "entry" },
     { step: "Email 01", v: 1923, kind: "email" },

@@ -8,7 +8,7 @@ import {
   Bar, BarChart, CartesianGrid, LabelList, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import {
-  Database, LogIn, Send, Target, GitBranch, TrendingUp, Lightbulb, ShieldAlert, Activity, Info, Calendar, Mail,
+  Database, LogIn, Send, GitBranch, TrendingUp, Lightbulb, ShieldAlert, Activity, Info, Calendar, Mail,
 } from "lucide-react";
 import e1 from "@/assets/eml01.jpg.asset.json";
 import e2 from "@/assets/eml02.jpg.asset.json";
@@ -46,7 +46,6 @@ const overviewMeta: { key: keyof Overview; icon: typeof Database; label: string;
   { key: "base", icon: Database, label: "Base da Data Extension", desc: "Base de origem dos contatos. Estar na base não significa ter iniciado a jornada.", tone: "blue" },
   { key: "entradas", icon: LogIn, label: "Entradas na Jornada", desc: "Contatos que iniciaram a jornada no período.", tone: "purple" },
   { key: "envios", icon: Send, label: "Total de Envios", desc: "Total informado no resumo da fonte. Não equivale ao número de pessoas nem à soma do tracking abaixo.", tone: "pink" },
-  { key: "mql", icon: Target, label: "MQL preenchido", desc: "Contatos que atingiram o objetivo de qualificação pelo formulário. Abrir ou clicar não basta.", tone: "orange" },
 ];
 
 const kpiChip: Record<string, string> = {
@@ -275,7 +274,6 @@ function Dashboard() {
             <dl className="space-y-4 text-sm">
               {[
                 ["Entradas", fmt(data.overview.entradas)],
-                ["MQL preenchido", fmt(data.overview.mql)],
                 [`Chegaram ao ${lastEmail?.step ?? "último e-mail"}`, fmt(lastEmail?.v ?? 0)],
                 ["Última validação do MQL", fmt(lastSplit?.v ?? 0)],
                 ["Etapas mapeadas", sheetData ? String(flow.length) : "17"],

@@ -14,9 +14,9 @@ describe("journey sheet parsing", () => {
   });
 
   it("keeps original data for tabs that are missing", () => {
-    const { data, loaded } = parseJourneySheets({ overview: [["Indicador", "Valor"], ["MQL", 600]] });
-    expect(data.overview.mql).toBe(600);
-    expect(data.overview.entradas).toBe(1923);
+    const { data, loaded } = parseJourneySheets({ overview: [["Indicador", "Valor"], ["Entradas na Jornada", 2000]] });
+    expect(data.overview.entradas).toBe(2000);
+    expect(data.overview.base).toBe(7425);
     expect(data.emails).toEqual(defaultJourney.emails);
     expect(loaded).toEqual(["Visao_Geral"]);
   });

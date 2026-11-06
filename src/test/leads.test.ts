@@ -8,7 +8,6 @@ describe("lead base consolidation", () => {
   it("counts the uploaded base", () => {
     expect(c.base).toBe(8395);
     expect(c.entradas).toBe(8385);
-    expect(c.mql).toBe(16);
   });
   it("counts CNPJ and form answers", () => {
     expect(c.cnpj).toBe(12);

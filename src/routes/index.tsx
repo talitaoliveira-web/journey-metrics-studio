@@ -216,6 +216,9 @@ function Dashboard() {
           </div>
         </Panel>
 
+        <SectionTitle n="00.1" title="Por dentro da jornada: como funciona a estratégia de Inbound Leads" sub="Mapa original e explicação passo a passo" color="bg-globo-purple" />
+        <JourneyStory />
+
         {/* Block 1 */}
         <SectionTitle n="01" title="Visão Geral da Jornada" sub="JNY_INBOUND_LEADS_AON" color="bg-globo-purple" />
         {overviewMeta.map((k) => (
@@ -310,8 +313,6 @@ function Dashboard() {
         <EmailGallery pieces={pieces} metrics={emails} />
 
         {/* Por dentro da jornada */}
-        <SectionTitle n="02.2" title="Por dentro da jornada: como funciona a estratégia de Inbound Leads" sub="Mapa original e explicação passo a passo" color="bg-globo-purple" />
-        <JourneyStory />
 
         {/* Block 3 */}
         <SectionTitle n="03" title="Performance dos Emails" sub="Resultados operacionais dos disparos" color="bg-globo-blue" />

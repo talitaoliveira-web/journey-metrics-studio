@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toLead, type Lead, type LeadRow } from "@/lib/leads";
 import { EmailGallery } from "@/components/email-gallery";
+import { JourneyStory } from "@/components/journey-story";
 import { SheetSource } from "@/components/sheet-source";
 import { LeadsSection } from "@/components/leads-section";
 import { defaultJourney, type JourneyData, type Overview } from "@/lib/journey-data";
@@ -307,6 +308,10 @@ function Dashboard() {
         <SectionTitle n="02.1" title="Peças da Jornada" sub="Os 5 e-mails enviados" color="bg-globo-orange" />
         <p className="col-span-12 text-sm leading-6 text-muted-foreground">As peças acompanham uma conversa progressiva: apresentar, inspirar, explicar e convidar à qualificação. Os números abaixo são do tracking de cada e-mail, não uma atribuição de MQL à peça.</p>
         <EmailGallery pieces={pieces} metrics={emails} />
+
+        {/* Por dentro da jornada */}
+        <SectionTitle n="02.2" title="Por dentro da jornada: como funciona a estratégia de Inbound Leads" sub="Mapa original e explicação passo a passo" color="bg-globo-purple" />
+        <JourneyStory />
 
         {/* Block 3 */}
         <SectionTitle n="03" title="Performance dos Emails" sub="Resultados operacionais dos disparos" color="bg-globo-blue" />

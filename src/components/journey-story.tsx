@@ -35,12 +35,12 @@ const steps: StoryStep[] = [
   {
     icon: Hourglass,
     title: "Pausa para respirar",
-    text: "Depois de cada e-mail, a jornada aguarda alguns dias. Essa espera dá tempo para o contato abrir, ler e responder antes da próxima checagem, evitando comunicações atropeladas.",
+    text: "Depois de cada e-mail, há uma etapa de espera antes da próxima checagem. Envio, espera e verificação são atividades diferentes, pelas quais o mesmo contato pode passar.",
   },
   {
     icon: GitBranch,
     title: "A grande pergunta: preencheu o MQL?",
-    text: "Ao fim de cada espera, a jornada verifica se o contato preencheu o formulário de qualificação (o MQL). Essa checagem é o coração da estratégia e se repete ao longo de todo o percurso.",
+    text: "Ao fim de cada espera, a jornada verifica o preenchimento do formulário de qualificação. No mapa, essa atividade se chama Preencheu MQL?. Ela checa uma informação, não conta vendas nem comprova o efeito de um e-mail.",
     condition: {
       se: "O contato preencheu o MQL",
       sePath: "O objetivo foi atingido. Ele segue pelo caminho de conversão e não precisa mais receber a sequência de nutrição.",
@@ -87,7 +87,7 @@ const steps: StoryStep[] = [
   {
     icon: LogOut,
     title: "Saídas em momentos diferentes",
-    text: "Cada caminho tem seu ponto de saída, nos dias 6, 12 ou 19 do percurso. Sair da jornada encerra o recebimento de comunicações, mas o registro do contato permanece na base com o resultado obtido.",
+    text: "O mapa apresenta pontos de saída próprios para os diferentes caminhos. Sair da jornada encerra o recebimento de comunicações, mas o registro do contato permanece na base com o resultado obtido.",
   },
 ];
 
@@ -163,9 +163,10 @@ export function JourneyStory() {
         </button>
       </div>
 
+      <p className="col-span-12 text-xs leading-5 text-muted-foreground"><strong className="text-foreground">Três leituras diferentes:</strong> o mapa mostra as atividades e suas ramificações; os 12 passos abaixo agrupam essa lógica para explicá-la; a tabela de estágios reproduz as linhas da planilha. As 17 linhas do relatório original não são uma contagem de todos os blocos da imagem.</p>
       {/* Narrativa guiada */}
-      <div className="col-span-12 grid gap-5 lg:grid-cols-12">
-        <div className="lg:col-span-7">
+      <div className="col-span-12 grid gap-5">
+        <div className="min-w-0">
           <ol className="relative space-y-4 before:absolute before:bottom-4 before:left-[15px] before:top-4 before:w-px before:bg-border">
             {steps.map((step, i) => (
               <li key={step.title} className="relative flex gap-4">
@@ -174,7 +175,7 @@ export function JourneyStory() {
                 </span>
                 <div className="min-w-0 flex-1 rounded-md border border-border bg-card p-4">
                   <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    Etapa {String(i + 1).padStart(2, "0")} de {steps.length}
+                    Passo explicativo {String(i + 1).padStart(2, "0")} de {steps.length}
                   </p>
                   <p className="mt-1 text-sm font-semibold text-foreground">{step.title}</p>
                   <p className="mt-1 text-xs leading-5 text-muted-foreground">{step.text}</p>
@@ -190,35 +191,7 @@ export function JourneyStory() {
           </ol>
         </div>
 
-        {/* O que a jornada revela */}
-        <div className="lg:col-span-5">
-          <div className="rounded-md border border-border bg-card p-5 lg:sticky lg:top-6">
-            <div className="flex items-center gap-3">
-              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-globo-purple/10 text-globo-purple">
-                <Compass className="h-4 w-4" />
-              </span>
-              <div>
-                <h3 className="text-sm font-semibold text-foreground">O que a estrutura da jornada revela</h3>
-                <p className="text-xs text-muted-foreground">Leituras sobre a estratégia, não resultados comprovados.</p>
-              </div>
-            </div>
-            <ul className="mt-4 space-y-3">
-              {revelations.map((text, i) => (
-                <li key={i} className="flex gap-3 rounded-md border border-border p-3">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-sm bg-primary-soft text-[11px] font-semibold text-primary">{i + 1}</span>
-                  <p className="text-xs leading-5 text-muted-foreground">{text}</p>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-4 rounded-md border border-border bg-muted p-3 text-xs leading-5 text-muted-foreground">
-              Estas interpretações descrevem o que a estrutura permite compreender sobre a estratégia. Elas não comprovam, sozinhas, resultados de conversão ou de engajamento.
-            </p>
-            <p className="mt-3 flex items-center gap-2 text-[11px] text-muted-foreground">
-              <CalendarClock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-              Agenda da jornada: início em 26/08/2026, execução semanal às quartas-feiras, avaliando apenas registros novos.
-            </p>
-          </div>
-        </div>
+        <p className="flex items-center gap-2 text-xs leading-5 text-muted-foreground"><CalendarClock className="h-4 w-4 shrink-0" aria-hidden="true" />Início em 26/08/2026. A entrada avalia novos registros às quartas-feiras.</p>
       </div>
 
       {/* Zoom do mapa */}
@@ -253,5 +226,35 @@ export function JourneyStory() {
         </DialogContent>
       </Dialog>
     </>
+  );
+}
+
+export function JourneyStructureInsights() {
+  return (
+        <div className="col-span-12">
+          <div className="border-t border-border py-5">
+            <div className="flex items-center gap-3">
+              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-globo-purple/10 text-globo-purple">
+                <Compass className="h-4 w-4" />
+              </span>
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">O que a estrutura da jornada revela</h3>
+                <p className="text-xs text-muted-foreground">Leituras sobre a estratégia, não resultados comprovados.</p>
+              </div>
+            </div>
+            <ul className="mt-4 space-y-3">
+              {revelations.map((text, i) => (
+                <li key={i} className="flex gap-3 rounded-md border border-border p-3">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-sm bg-primary-soft text-[11px] font-semibold text-primary">{i + 1}</span>
+                  <p className="text-xs leading-5 text-muted-foreground">{text}</p>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 rounded-md border border-border bg-muted p-3 text-xs leading-5 text-muted-foreground">
+              Estas interpretações descrevem o que a estrutura permite compreender sobre a estratégia. Elas não comprovam, sozinhas, resultados de conversão ou de engajamento.
+            </p>
+
+          </div>
+        </div>
   );
 }

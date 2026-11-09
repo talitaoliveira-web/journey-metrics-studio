@@ -31,7 +31,15 @@ export function EmailGallery({ pieces, metrics }: { pieces: EmailPiece[]; metric
 
   return (
     <>
-      <div className="col-span-12 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
+      <dl className="col-span-12 grid gap-4 border-y border-border py-4 text-xs sm:grid-cols-2 xl:grid-cols-4">
+        {[
+          ["Envios e entregas", "Envios são disparos registrados, não pessoas únicas. Entregas são mensagens que chegaram ao destino; essa quantidade não está disponível por peça."],
+          ["Aberturas e cliques", "Abertura é uma visualização registrada; aberturas únicas deduplicam esse registro no tracking. Cliques registram ações nos links, não preenchimento do formulário."],
+          ["CTR e CTOR", "CTR relaciona cliques aos envios; CTOR relaciona cliques às aberturas. São taxas de interação, não taxas de qualificação."],
+          ["Falhas e descadastros", "Bounce é falha de entrega. Descadastro é saída da comunicação. Ambos aparecem como taxas da fonte, não como quantidades de contatos."],
+        ].map(([label, text]) => <div key={label}><dt className="font-semibold text-foreground">{label}</dt><dd className="mt-1 leading-5 text-muted-foreground">{text}</dd></div>)}
+      </dl>
+      <div className="col-span-12 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {pieces.map((piece, index) => {
           const row = metrics.find((item) => item.email === piece.id);
           return (
@@ -49,20 +57,19 @@ export function EmailGallery({ pieces, metrics }: { pieces: EmailPiece[]; metric
               </span>
             </div>
             <div className="min-w-0 px-3 py-3">
-              <p className="text-[11px] font-semibold text-primary">{piece.id}</p>
+              <p className="text-[11px] font-semibold text-primary">{piece.id} · {index + 1} de {pieces.length}</p>
               <p className="mt-1 line-clamp-2 min-h-10 whitespace-normal text-xs font-medium leading-5 text-foreground">{piece.subject}</p>
             </div>
           </Button>
           <div className="border-t border-border px-3 pb-4 pt-3">
             <p className="text-xs leading-5 text-muted-foreground">{piece.desc}</p>
             {row ? <>
-              <p className="mb-2 mt-4 text-[10px] font-semibold uppercase text-primary">Fato · tracking do e-mail</p>
+              <p className="mb-2 mt-4 text-[10px] font-semibold uppercase text-primary">Indicadores registrados</p>
               <dl className="grid grid-cols-2 gap-x-2 gap-y-3 text-xs">
-                {[["Envios", fmt(row.sends)], ["Abertura", pct(row.openRate)], ["Cliques", fmt(row.clicks)], ["CTR", pct(row.ctr)]].map(([label, value]) => <div key={label}><dt className="text-muted-foreground">{label}</dt><dd className="mt-1 font-semibold tabular-nums text-foreground">{value}</dd></div>)}
+                {[["Envios", fmt(row.sends)], ["Abertura", pct(row.openRate)], ["Aberturas únicas", fmt(row.uniqueOpens)], ["Cliques", fmt(row.clicks)], ["CTR", pct(row.ctr)], ["CTOR", pct(row.ctor)], ["Falhas de entrega", pct(row.bounce)], ["Descadastros", pct(row.unsub)]].map(([label, value]) => <div key={label}><dt className="text-muted-foreground">{label}</dt><dd className="mt-1 font-semibold tabular-nums text-foreground">{value}</dd></div>)}
               </dl>
             </> : <p className="mt-3 text-xs text-muted-foreground">Sem indicadores correspondentes na fonte carregada.</p>}
-            <p className="mb-1 mt-4 text-[10px] font-semibold uppercase text-globo-purple">Aprendizado a investigar</p>
-            <p className="text-xs leading-5 text-muted-foreground">{piece.learning}</p>
+            <p className="mt-3 text-xs leading-5 text-muted-foreground"><strong className="text-foreground">Entregas:</strong> quantidade não informada por peça na fonte disponível. Não estimada a partir da taxa de falhas.</p>
           </div>
           </article>
         );})}

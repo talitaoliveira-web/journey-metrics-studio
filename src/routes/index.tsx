@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toLead, type Lead, type LeadRow } from "@/lib/leads";
 import { EmailGallery } from "@/components/email-gallery";
-import { JourneyStory } from "@/components/journey-story";
+import { JourneyStory, JourneyStructureInsights } from "@/components/journey-story";
 import { SheetSource } from "@/components/sheet-source";
 import { LeadsSection } from "@/components/leads-section";
 import { defaultJourney, type JourneyData, type Overview } from "@/lib/journey-data";
@@ -45,7 +45,7 @@ const fmt = (n: number) => n.toLocaleString("pt-BR");
 const pct = (n: number) => n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
 
 const overviewMeta: { key: keyof Overview; icon: typeof Database; label: string; desc: string; tone: string }[] = [
-  { key: "base", icon: Database, label: "Base da Data Extension", desc: "Base de origem dos contatos. Estar na base não significa ter iniciado a jornada.", tone: "blue" },
+  { key: "base", icon: Database, label: "Base de origem", desc: "Base de origem dos contatos. Estar na base não significa ter iniciado a jornada.", tone: "blue" },
   { key: "entradas", icon: LogIn, label: "Entradas na Jornada", desc: "Contatos que iniciaram a jornada no período.", tone: "purple" },
   { key: "envios", icon: Send, label: "Total de Envios", desc: "Total informado no resumo da fonte. Não equivale ao número de pessoas nem à soma do tracking abaixo.", tone: "pink" },
 ];
@@ -164,7 +164,7 @@ function Dashboard() {
         <Panel className="col-span-12 xl:col-span-7" title="Objetivo">
           <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
             <p>Qualificar novos leads, estimular o preenchimento dos dados e atualizar a base de CRM, principalmente com o <span className="font-semibold text-foreground">CNPJ da empresa</span>. Quanto mais dados obtidos, melhor entendemos o lead para direcioná-lo a ações de relacionamento e oportunidades comerciais.</p>
-            <p>Os leads chegam à Data Extension por diversos canais: site da Globo, eventos, campanhas de marketing e outras ações internas e externas.</p>
+            <p>Os contatos selecionados vêm da base sincronizada com o Salesforce. A origem de cada contato não é detalhada nos indicadores deste painel.</p>
             <p>A jornada também tem papel <span className="font-semibold text-foreground">educativo</span>: o lead conhece a Globo Ads, entende como a plataforma funciona, acessa casos de sucesso e descobre como usar as soluções de forma estratégica.</p>
           </div>
         </Panel>
@@ -184,14 +184,14 @@ function Dashboard() {
               ))}
             </ol>
             <p className="mt-3 rounded-md border border-border bg-muted p-3 text-xs leading-relaxed text-muted-foreground">
-              A jornada não é um fluxo linear de exclusão por engajamento: é um processo contínuo de nutrição que só termina quando o contato converte em MQL.
+              Não abrir ou não clicar não exclui automaticamente o contato. Sem preenchimento do formulário, ele continua na sequência prevista, até a classificação e a saída do seu caminho.
             </p>
           </Panel>
           <Panel title="Cadência e horário de envio">
-            <p className="globo-gradient bg-clip-text text-3xl font-semibold text-transparent">6 dias</p>
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Intervalo configurado entre as comunicações.</p>
+            <p className="text-sm font-semibold text-foreground">Comunicar, aguardar e verificar</p>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">As esperas separam as comunicações antes de uma nova checagem do formulário.</p>
             <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-              <span className="font-semibold text-foreground">Einstein Send Time Optimization (STO):</span> define o horário de disparo por inteligência preditiva, com o objetivo de aumentar a chance de abertura e interação. Os dados apresentados não isolam o efeito desse recurso.
+              <span className="font-semibold text-foreground">Einstein Send Time Optimization (STO):</span> define o horário de disparo por inteligência preditiva, com o objetivo de aumentar a chance de abertura e interação.
             </p>
           </Panel>
         </div>
@@ -216,13 +216,22 @@ function Dashboard() {
           </div>
         </Panel>
 
-        <SectionTitle n="00.1" title="Por dentro da jornada: como funciona a estratégia de Inbound Leads" sub="Mapa original e explicação passo a passo" color="bg-globo-purple" />
+        <SectionTitle n="01" title="MQL e qualificação" sub="O que significa estar qualificado" color="bg-globo-purple" />
+        <p className="col-span-12 text-sm leading-6 text-muted-foreground"><strong className="text-foreground">MQL significa Marketing Qualified Lead, ou lead qualificado pelo marketing.</strong> É um contato classificado para o próximo passo comercial conforme os critérios da operação. Nesta jornada, o preenchimento do formulário é a checagem que direciona o caminho de qualificação. Abrir um e-mail, clicar ou ter CPF/CNPJ cadastrado não comprova, por si só, essa classificação.</p>
+        {[
+          ["Lead captado", "Contato registrado na base. Ainda precisa atender às regras de entrada para iniciar a jornada."],
+          ["Em qualificação", "Contato que recebe conteúdos e convites ao formulário. Participar da sequência não significa já estar qualificado."],
+          ["Validação do preenchimento", "Atividade que verifica se o formulário foi preenchido. Seu volume mede passagens pela checagem, não MQLs identificados."],
+          ["Qualificação identificada", "Resultado registrado a partir do formulário e da classificação da operação. Não equivale a uma venda; este painel não apresenta contagem de MQL."],
+        ].map(([title, text], index) => <Panel key={title} className="col-span-12 md:col-span-6 xl:col-span-3" title={`${index + 1}. ${title}`}><p className="text-xs leading-5 text-muted-foreground">{text}</p></Panel>)}
+
+        <SectionTitle n="02" title="Por dentro da jornada: como funciona a estratégia de Inbound Leads" sub="Mapa original e explicação passo a passo" color="bg-globo-purple" />
         <JourneyStory />
 
         {/* Block 1 */}
-        <SectionTitle n="01" title="Visão Geral da Jornada" sub="JNY_INBOUND_LEADS_AON" color="bg-globo-purple" />
+        <SectionTitle n="02.1" title="Visão Geral da Jornada" sub="JNY_INBOUND_LEADS_AON" color="bg-globo-purple" />
         {overviewMeta.map((k) => (
-          <Panel key={k.label} className="col-span-12 md:col-span-6 xl:col-span-3">
+          <Panel key={k.label} className="col-span-12 md:col-span-4">
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{k.label}</p>
               <span className={`flex h-8 w-8 items-center justify-center rounded-md ${kpiChip[k.tone]}`}>
@@ -240,7 +249,7 @@ function Dashboard() {
         </div>
 
         {/* Block 2 */}
-        <SectionTitle n="02" title="Fluxo da Jornada" sub="Contatos por atividade" color="bg-globo-pink" />
+        <SectionTitle n="02.2" title="Estágios da Jornada" sub="Registros por atividade na planilha" color="bg-globo-pink" />
         <Panel className="col-span-12 xl:col-span-8" title="Contatos por etapa">
           <div className="space-y-1.5">
             {flow.map((f, i) => {
@@ -284,8 +293,8 @@ function Dashboard() {
               {[
                 ["Entradas", fmt(data.overview.entradas)],
                 [`Chegaram ao ${lastEmail?.step ?? "último e-mail"}`, fmt(lastEmail?.v ?? 0)],
-                ["Última validação do MQL", fmt(lastSplit?.v ?? 0)],
-                ["Etapas mapeadas", sheetData ? String(flow.length) : "17"],
+                ["Registros na última checagem", fmt(lastSplit?.v ?? 0)],
+                ["Atividades listadas na planilha", String(flow.length)],
               ].map(([a, b]) => (
                 <div key={a} className="flex items-center justify-between border-b border-border pb-3 last:border-0 last:pb-0">
                   <dt className="text-muted-foreground">{a}</dt>
@@ -298,29 +307,35 @@ function Dashboard() {
             <div className="flex gap-3">
               <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
               <div>
-                <p className="text-sm font-semibold text-foreground">Observação técnica</p>
+                <p className="text-sm font-semibold text-foreground">Como ler os volumes</p>
                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                   Os volumes são registros por atividade, não parcelas que se somam. A validação checa o preenchimento do MQL; não é o total de MQL convertidos. Quem converte sai antes das próximas comunicações. A diferença entre etapas, sozinha, não comprova perda de interesse nem quantifica conversões.
+                   Os volumes são registros por atividade, não parcelas que se somam. A validação checa o preenchimento do MQL; não é o total de MQL convertidos. Quem converte sai antes das próximas comunicações. A mesma pessoa pode aparecer em várias atividades. Não some essas linhas como se fossem pessoas distintas.
                  </p>
               </div>
             </div>
           </Panel>
         </div>
 
+        <SectionTitle n="03" title="Identificação dos Leads" color="bg-globo-blue" />
+        <LeadsSection leads={leads} section="identity" />
+        <LeadsSection leads={leads} section="stages" />
+        <SectionTitle n="03.1" title="Perguntas e Respostas" color="bg-globo-purple" />
+        <LeadsSection leads={leads} section="questions" />
+
         {/* Peças */}
-        <SectionTitle n="02.1" title="Peças da Jornada" sub="Os 5 e-mails enviados" color="bg-globo-orange" />
+        <SectionTitle n="04" title="Os cinco e-mails da jornada" sub="Papel de cada peça e indicadores registrados" color="bg-globo-orange" />
         <p className="col-span-12 text-sm leading-6 text-muted-foreground">As peças acompanham uma conversa progressiva: apresentar, inspirar, explicar e convidar à qualificação. Os números abaixo são do tracking de cada e-mail, não uma atribuição de MQL à peça.</p>
         <EmailGallery pieces={pieces} metrics={emails} />
 
         {/* Por dentro da jornada */}
 
         {/* Block 3 */}
-        <SectionTitle n="03" title="Performance dos Emails" sub="Resultados operacionais dos disparos" color="bg-globo-blue" />
+        <SectionTitle n="05" title="Comparativo de desempenho dos e-mails" sub="Resultados operacionais dos disparos" color="bg-globo-blue" />
         <Panel className="col-span-12 overflow-x-auto" title="Comparativo por e-mail">
           <table className="w-full min-w-[900px] text-sm">
             <thead>
               <tr className="border-b border-border text-left text-[11px] uppercase tracking-wide text-muted-foreground">
-                {["E-mail", "Envios", "Taxa de abertura", "Aberturas únicas", "Cliques", "CTR", "CTOR", "Falhas de entrega", "Descadastros"].map((h, i) => (
+                {["E-mail", "Envios", "Taxa de abertura", "Aberturas únicas", "Cliques", "CTR", "CTOR", "Falhas de entrega (%)", "Descadastros (%)"].map((h, i) => (
                   <th key={h} className={`py-3 font-medium ${i ? "text-right" : ""}`}>{h}</th>
                 ))}
               </tr>
@@ -351,7 +366,6 @@ function Dashboard() {
               <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                 O fluxo registra contatos por atividade; o tracking registra envios e respostas por e-mail. Mais envios não significam uma taxa de interação maior. Quem preenche o MQL pode sair antes das próximas peças, mudando o público que segue na jornada. Não é correto atribuir a queda de volume automaticamente à perda de interesse.
               </p>
-              <p className="mt-2 text-xs leading-relaxed text-muted-foreground"><strong className="text-foreground">Hipóteses, não causas comprovadas:</strong> horários definidos pelo STO, períodos de extração distintos e ocorrências de entrega podem influenciar os volumes. Para explicar a diferença, é preciso conferir os registros de envio, as datas e os motivos de saída.</p>
             </div>
           </div>
           <dl className="mt-4 grid gap-4 border-t border-border pt-4 text-xs sm:grid-cols-2 xl:grid-cols-4">
@@ -371,7 +385,7 @@ function Dashboard() {
               </Bar>
             </BarChart>
           </ResponsiveContainer>
-          <p className="mt-3 border-t border-border pt-3 text-xs leading-5 text-muted-foreground">Volume absoluto de disparos, não de pessoas únicas. Conversões anteriores podem reduzir o público das próximas peças; o gráfico não identifica o motivo da diferença.</p>
+          <p className="mt-3 border-t border-border pt-3 text-xs leading-5 text-muted-foreground">Volume absoluto de disparos por e-mail, não de pessoas únicas. A mesma pessoa pode receber mais de uma comunicação.</p>
         </Panel>
         <Panel className="col-span-12 lg:col-span-4" title="Taxa de abertura (%)">
           <ResponsiveContainer width="100%" height={240}>
@@ -385,7 +399,7 @@ function Dashboard() {
               </Line>
             </LineChart>
           </ResponsiveContainer>
-          <p className="mt-3 border-t border-border pt-3 text-xs leading-5 text-muted-foreground">Resposta proporcional registrada em cada envio. Uma taxa maior com um público menor não comprova maior alcance, mais MQL ou superioridade do conteúdo.</p>
+          <p className="mt-3 border-t border-border pt-3 text-xs leading-5 text-muted-foreground">Percentual de abertura registrado no tracking de cada e-mail. A quantidade de aberturas únicas aparece na tabela; a taxa não mede qualificação ou venda.</p>
         </Panel>
         <Panel className="col-span-12 lg:col-span-4" title="CTR (%)">
           <ResponsiveContainer width="100%" height={240}>
@@ -402,8 +416,16 @@ function Dashboard() {
           <p className="mt-3 border-t border-border pt-3 text-xs leading-5 text-muted-foreground">Taxa de cliques em relação aos envios. O clique sinaliza uma ação, mas a qualificação depende do formulário; o gráfico não mede conversão em MQL.</p>
         </Panel>
 
+        {/* Limites de leitura */}
+        <footer className="col-span-12 mt-6 border-t border-border pt-5">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Limites de leitura</p>
+          <p className="mt-2 max-w-5xl text-xs leading-relaxed text-muted-foreground">
+            As métricas de Estágios da Jornada representam os contatos que passaram pelas atividades configuradas no Journey Builder. As métricas de Performance dos E-mails representam os resultados operacionais dos disparos. Esses conjuntos possuem níveis de detalhe distintos e não devem ser comparados diretamente. CPF identifica uma pessoa; CNPJ identifica uma empresa. O preenchimento desses dados contribui para conhecer o contato, mas, isoladamente, não comprova conversão em MQL ou venda. As tabelas da base de contatos descrevem seus próprios registros e não substituem o resumo geral da jornada.
+          </p>
+        </footer>
+
         {/* Block 4 */}
-        <SectionTitle n="04" title="Principais Insights" color="bg-globo-pink" />
+        <SectionTitle n="06" title="Insights estratégicos e oportunidades de melhoria" color="bg-globo-pink" />
         <div className="col-span-12 grid gap-5 md:grid-cols-2 xl:grid-cols-5">
           {insights.map((i) => (
             <Panel key={i.title}>
@@ -416,19 +438,14 @@ function Dashboard() {
             </Panel>
           ))}
         </div>
+        <LeadsSection leads={leads} section="insights" />
+        <JourneyStructureInsights />
+        <div className="col-span-12 border-t border-border pt-4">
+          <h3 className="text-sm font-semibold text-foreground">Oportunidades por e-mail</h3>
+          <ul className="mt-3 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">{pieces.map(piece => <li key={piece.id}><p className="text-xs font-semibold text-globo-purple">{piece.id} · Hipótese a testar</p><p className="mt-2 text-xs leading-5 text-muted-foreground">{piece.learning}</p></li>)}</ul>
+        </div>
 
-        <SectionTitle n="03.1" title="Identificação dos Leads" color="bg-globo-blue" />
-        <LeadsSection leads={leads} section="identity" />
-        <SectionTitle n="03.2" title="Perguntas e Respostas" color="bg-globo-purple" />
-        <LeadsSection leads={leads} section="questions" />
 
-        {/* Block 6 */}
-        <footer className="col-span-12 mt-6 border-t border-border pt-5">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">05 · Observações Técnicas</p>
-          <p className="mt-2 max-w-5xl text-xs leading-relaxed text-muted-foreground">
-            As métricas de Fluxo da Jornada representam os contatos que passaram pelas atividades configuradas no Journey Builder. As métricas de Performance dos E-mails representam os resultados operacionais dos disparos. Esses conjuntos possuem níveis de detalhe distintos e não devem ser comparados diretamente. CPF identifica uma pessoa; CNPJ identifica uma empresa. O preenchimento desses dados contribui para conhecer o contato, mas, isoladamente, não comprova conversão em MQL ou venda. As tabelas da base abaixo descrevem seus próprios registros e não substituem o resumo geral da jornada.
-          </p>
-        </footer>
       </div>
     </div>
   );

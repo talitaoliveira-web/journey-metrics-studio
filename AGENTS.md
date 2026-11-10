@@ -14,3 +14,4 @@
 - Keep document and question aggregations browser-safe in a separate analysis module; document groups are independent and all percentages use the displayed source or selected segment denominator, so overlaps and distinct report bases stay explicit.
 - Render journey-structure interpretations separately from the guided map narrative, so all insights can remain together in the final dashboard section.
 - Normalize superseded source values in the browser-safe sheet parser, not individual views, so confirmed corrections remain consistent across tables, galleries and charts without changing unrelated metrics.
+- Keep email consistency diagnostics in a browser-safe pure validator; report ratio checks without mutating metrics or inferring missing delivered counts.

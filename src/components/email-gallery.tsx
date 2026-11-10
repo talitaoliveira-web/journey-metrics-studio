@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Expand, ZoomIn, ZoomOut, Scan } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { AssetImage } from "@/components/asset-image";
 
 import type { EmailRow } from "@/lib/journey-data";
 import { validateEmail01 } from "@/lib/email-validation";
@@ -53,7 +54,7 @@ export function EmailGallery({ pieces, metrics }: { pieces: EmailPiece[]; metric
             className="group h-auto w-full min-w-0 flex-col items-stretch gap-0 overflow-hidden rounded-none border-0 bg-card p-0 text-left shadow-none"
           >
             <div className="relative h-28 overflow-hidden border-b border-border bg-muted">
-              <img src={piece.img.url} alt={`Prévia do ${piece.id}`} className="h-full w-full object-cover object-top" loading="lazy" />
+              <AssetImage src={piece.img.url} alt={`Prévia do ${piece.id}`} label={`Arte do ${piece.id}`} className="h-full w-full object-cover object-top" testId={`email-art-preview-${piece.id.toLowerCase().replace(/\s+/g, "-")}`} />
               <span className="absolute bottom-2 right-2 flex h-7 w-7 items-center justify-center rounded-sm border border-border bg-card text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                 <Expand aria-hidden="true" />
               </span>
@@ -104,7 +105,7 @@ export function EmailGallery({ pieces, metrics }: { pieces: EmailPiece[]; metric
               </div>
             </div>
             <div ref={scrollRef} className="min-h-0 flex-1 overflow-auto bg-muted p-3 sm:p-5">
-              <img key={active.id} src={active.img.url} alt={`Layout completo do ${active.id}`} className={zoom === 100 ? "mx-auto block h-auto w-full max-w-[640px]" : "mx-auto block h-auto max-w-none"} style={zoom > 100 ? { width: `${640 * zoom / 100}px` } : undefined} />
+              <AssetImage key={active.id} src={active.img.url} alt={`Layout completo do ${active.id}`} label={`Arte do ${active.id}`} className={zoom === 100 ? "mx-auto block h-auto w-full max-w-[640px]" : "mx-auto block h-auto max-w-none"} style={zoom > 100 ? { width: `${640 * zoom / 100}px` } : undefined} testId={`email-art-zoom-${active.id.toLowerCase().replace(/\s+/g, "-")}`} />
             </div>
             <p className="shrink-0 border-t border-border bg-card px-5 py-3 text-xs leading-5 text-muted-foreground">{active.desc}</p>
           </DialogContent>

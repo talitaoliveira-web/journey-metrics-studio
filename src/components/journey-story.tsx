@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { AssetImage } from "@/components/asset-image";
 import journeyMap from "@/assets/jornada-canvas.jpg.asset.json";
 
 type Condition = { se: string; sePath: string; nao: string; naoPath: string };
@@ -151,11 +152,13 @@ export function JourneyStory() {
           aria-label="Ampliar o mapa da jornada"
           className="group relative block max-h-[420px] w-full cursor-zoom-in overflow-hidden bg-muted"
         >
-          <img
+          <AssetImage
             src={journeyMap.url}
             alt="Mapa original da jornada JNY_INBOUND_LEADS_AON no Journey Builder"
+            label="Mapa geral da jornada"
             className="w-full object-cover object-top"
-            loading="lazy"
+            fallbackClassName="min-h-[300px]"
+            testId="journey-map-canvas"
           />
           <span className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-sm border border-border bg-card text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
             <Expand className="h-4 w-4" aria-hidden="true" />
@@ -216,11 +219,14 @@ export function JourneyStory() {
             </Button>
           </div>
           <div ref={scrollRef} className="min-h-0 flex-1 overflow-auto bg-muted p-3 sm:p-5">
-            <img
+            <AssetImage
               src={journeyMap.url}
               alt="Mapa completo da jornada JNY_INBOUND_LEADS_AON"
+              label="Mapa geral da jornada"
               className={zoom === 100 ? "mx-auto block h-auto w-full max-w-[1100px]" : "mx-auto block h-auto max-w-none"}
               style={zoom > 100 ? { width: `${1100 * zoom / 100}px` } : undefined}
+              fallbackClassName="min-h-[420px]"
+              testId="journey-map-canvas-zoom"
             />
           </div>
         </DialogContent>

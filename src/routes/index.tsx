@@ -29,10 +29,10 @@ const pieces = [
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Jornada inbound AON" },
-      { name: "description", content: "Jornada inbound AON: qualificação de leads, análise dos cinco e-mails e aprendizados estratégicos, com fatos e hipóteses separados." },
-      { property: "og:title", content: "Jornada inbound AON" },
-      { property: "og:description", content: "Entenda a qualificação de leads, as cinco comunicações e os limites da análise da Jornada inbound AON." },
+      { title: "Renderize — Jornada inbound AON" },
+      { name: "description", content: "Renderize: Jornada inbound AON — qualificação de leads, análise dos cinco e-mails e aprendizados estratégicos, com fatos e hipóteses separados." },
+      { property: "og:title", content: "Renderize — Jornada inbound AON" },
+      { property: "og:description", content: "Renderize: entenda a qualificação de leads, as cinco comunicações e os limites da análise da Jornada inbound AON." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -119,8 +119,8 @@ function Dashboard() {
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="text-xs font-medium uppercase tracking-widest text-primary-foreground/70">Globo • CRM • WPP Commerce</p>
-              <h1 className="mt-2 text-4xl font-bold tracking-tight">Jornada inbound AON</h1>
-              <p className="mt-1 text-base text-primary-foreground/80">Salesforce Marketing Cloud • JNY_INBOUND_LEADS_AON</p>
+              <h1 className="mt-2 text-4xl font-bold tracking-tight">Renderize</h1>
+              <p className="mt-1 text-base text-primary-foreground/80">Jornada inbound AON • Salesforce Marketing Cloud • JNY_INBOUND_LEADS_AON</p>
             </div>
             <div className="flex flex-wrap items-end gap-3">
               <div>

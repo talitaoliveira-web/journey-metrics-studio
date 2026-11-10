@@ -12,4 +12,10 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    server: {
+      // Preview ingress forwards the browser Host to cluster-*.preview.emergentcf.cloud.
+      allowedHosts: [".preview.emergentcf.cloud", ".preview.emergentagent.com"],
+    },
+  },
 });

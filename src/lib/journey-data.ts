@@ -142,7 +142,9 @@ export function parseJourneySheets(tabs: Partial<Record<keyof typeof SHEET_TABS,
       const nums = row.slice(1, 9).map(parseNumber);
       if (!name || nums.length < 8 || nums.some((x) => x === null)) continue;
       const [sends, openRate, uniqueOpens, clicks, ctr, ctor, bounce, unsub] = nums as [number, number, number, number, number, number, number, number];
-      list.push({ email: name, sends, openRate, uniqueOpens, clicks, ctr, ctor, bounce, unsub });
+      // Preserve the confirmed correction when an older sheet still carries the superseded value.
+      const correctedSends = name === "EML 01" && sends === 12613 ? 1923 : sends;
+      list.push({ email: name, sends: correctedSends, openRate, uniqueOpens, clicks, ctr, ctor, bounce, unsub });
     }
     if (list.length) { data.emails = list; loaded.push(SHEET_TABS.emails); }
     else warnings.push(`Aba ${SHEET_TABS.emails} sem linhas completas.`);

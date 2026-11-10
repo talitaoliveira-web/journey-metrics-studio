@@ -6,6 +6,16 @@ describe("journey sheet parsing", () => {
     expect(defaultJourney.emails.find(email => email.email === "EML 01")?.sends).toBe(1923);
   });
 
+  it("corrects superseded EML 01 sends from a loaded sheet without changing other metrics", () => {
+    const tabs = templateRows();
+    const row = tabs.emails.find(row => row[0] === "EML 01");
+    if (!row) throw new Error("Missing EML 01 template row");
+    row[1] = 12613;
+    const { data } = parseJourneySheets(tabs);
+    expect(data.emails.find(email => email.email === "EML 01")?.sends).toBe(1923);
+    expect(data.emails).toEqual(defaultJourney.emails);
+  });
+
   it("parses pt-BR numbers and percents", () => {
     expect(parseNumber("1.923")).toBe(1923);
     expect(parseNumber("28,55%")).toBe(28.55);

@@ -245,7 +245,7 @@ function Dashboard() {
 
         <div className="col-span-12 border-l-2 border-globo-purple py-2 pl-4 text-sm leading-6 text-muted-foreground">
           <p><strong className="text-foreground">Da base à oportunidade comercial:</strong> a base é o ponto de partida; as entradas mostram quem iniciou o relacionamento; os envios são comunicações; o MQL preenchido representa o objetivo atingido. Uma pessoa pode receber mais de um e-mail.</p>
-          <p className="mt-2 text-xs"><strong className="text-foreground">Limite da fonte:</strong> o resumo geral e o tracking dos cinco e-mails apresentam totais distintos de envios. Os valores foram preservados; sem confirmação do período e do escopo de cada extração, não é seguro reconciliá-los ou calcular uma conversão entre essas bases.</p>
+          <p className="mt-2 text-xs"><strong className="text-foreground">Conferência dos indicadores:</strong> o valor de referência dos envios do E-mail 01 foi corrigido para 1.923, conforme confirmação da responsável pela mesma base. As demais quantidades e taxas foram preservadas, sem recálculo. As 3.347 aberturas únicas registradas para esse e-mail excedem os envios corrigidos e precisam ser conferidas na fonte, assim como as taxas e os totais, antes de comparar o desempenho.</p>
         </div>
 
         {/* Block 2 */}

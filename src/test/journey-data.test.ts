@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 import { defaultJourney, extractSpreadsheetId, parseJourneySheets, parseNumber, templateRows } from "@/lib/journey-data";
 
 describe("journey sheet parsing", () => {
+  it("uses the confirmed 1,923 sends for EML 01", () => {
+    expect(defaultJourney.emails.find(email => email.email === "EML 01")?.sends).toBe(1923);
+  });
+
   it("parses pt-BR numbers and percents", () => {
     expect(parseNumber("1.923")).toBe(1923);
     expect(parseNumber("28,55%")).toBe(28.55);

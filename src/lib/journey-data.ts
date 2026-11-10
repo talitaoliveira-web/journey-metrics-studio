@@ -59,7 +59,7 @@ export const defaultJourney: JourneyData = {
     { step: "Não Convertido", v: 352, kind: "end" },
   ],
   emails: [
-    { email: "EML 01", sends: 12613, openRate: 26.54, uniqueOpens: 3347, clicks: 157, ctr: 1.24, ctor: 4.69, bounce: 3.23, unsub: 0.86 },
+    { email: "EML 01", sends: 1923, openRate: 26.54, uniqueOpens: 3347, clicks: 157, ctr: 1.24, ctor: 4.69, bounce: 3.23, unsub: 0.86 },
     { email: "EML 02", sends: 4510, openRate: 7.8, uniqueOpens: 352, clicks: 31, ctr: 0.69, ctor: 8.81, bounce: 0.33, unsub: 0.78 },
     { email: "EML 03", sends: 4018, openRate: 5.23, uniqueOpens: 210, clicks: 15, ctr: 0.37, ctor: 7.14, bounce: 0.35, unsub: 0.5 },
     { email: "EML 04", sends: 2593, openRate: 62.32, uniqueOpens: 1616, clicks: 71, ctr: 2.74, ctor: 4.39, bounce: 0.27, unsub: 1.27 },

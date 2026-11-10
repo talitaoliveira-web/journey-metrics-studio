@@ -217,12 +217,12 @@ function Dashboard() {
         </Panel>
 
         <SectionTitle n="01" title="MQL e qualificação" sub="O que significa estar qualificado" color="bg-globo-purple" />
-        <p className="col-span-12 text-sm leading-6 text-muted-foreground"><strong className="text-foreground">MQL significa Marketing Qualified Lead, ou lead qualificado pelo marketing.</strong> É um contato classificado para o próximo passo comercial conforme os critérios da operação. Nesta jornada, o preenchimento do formulário é a checagem que direciona o caminho de qualificação. Abrir um e-mail, clicar ou ter CPF/CNPJ cadastrado não comprova, por si só, essa classificação.</p>
+        <p className="col-span-12 text-sm leading-6 text-muted-foreground"><strong className="text-foreground">MQL significa Marketing Qualified Lead, ou Lead Qualificado pelo Marketing.</strong> Preenchimento, qualificação e conversão são etapas diferentes. Um contato pode preencher seus dados sem necessariamente se tornar MQL. Da mesma forma, um MQL não representa automaticamente uma conversão final. Validações e atividades não comprovam a quantidade de MQLs ou de conversões finais; seus registros não devem ser somados como se fossem contatos únicos.</p>
         {[
-          ["Lead captado", "Contato registrado na base. Ainda precisa atender às regras de entrada para iniciar a jornada."],
-          ["Em qualificação", "Contato que recebe conteúdos e convites ao formulário. Participar da sequência não significa já estar qualificado."],
-          ["Validação do preenchimento", "Atividade que verifica se o formulário foi preenchido. Seu volume mede passagens pela checagem, não MQLs identificados."],
-          ["Qualificação identificada", "Resultado registrado a partir do formulário e da classificação da operação. Não equivale a uma venda; este painel não apresenta contagem de MQL."],
+          ["Preenchimento", "Quando o contato informa os dados solicitados, como CPF. O preenchimento, isoladamente, não significa que ele se tornou MQL e não comprova automaticamente sua qualificação."],
+          ["Qualificação (MQL)", "Quando o contato atende aos critérios estabelecidos pelo Marketing para ser considerado um Lead Qualificado pelo Marketing. Ter CPF preenchido, abrir um e-mail ou clicar não comprova, por si só, essa qualificação."],
+          ["Conversão", "Quando o contato realiza efetivamente a ação final esperada pela estratégia. Ser MQL não significa necessariamente ter convertido; a conversão final precisa ser verificada separadamente."],
+          ["Exemplo ilustrativo", "De 100 leads captados, 70 preencheram o CPF e 50 atenderam aos critérios de qualificação. A quantidade de conversões finais precisa ser verificada separadamente. Esses números são apenas ilustrativos e não substituem os dados reais do dashboard."],
         ].map(([title, text], index) => <Panel key={title} className="col-span-12 md:col-span-6 xl:col-span-3" title={`${index + 1}. ${title}`}><p className="text-xs leading-5 text-muted-foreground">{text}</p></Panel>)}
 
         <SectionTitle n="02" title="Por dentro da jornada: como funciona a estratégia de Inbound Leads" sub="Mapa original e explicação passo a passo" color="bg-globo-purple" />

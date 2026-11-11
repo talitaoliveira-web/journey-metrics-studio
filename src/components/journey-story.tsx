@@ -6,7 +6,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { AssetImage } from "@/components/asset-image";
-import journeyMap from "@/assets/jornada-canvas.jpg.asset.json";
+import journeyMapUrl from "@/assets/jornada-canvas.jpg";
 
 type Condition = { se: string; sePath: string; nao: string; naoPath: string };
 
@@ -153,7 +153,7 @@ export function JourneyStory() {
           className="group relative block max-h-[420px] w-full cursor-zoom-in overflow-hidden bg-muted"
         >
           <AssetImage
-            src={journeyMap.url}
+            src={journeyMapUrl}
             alt="Mapa original da jornada JNY_INBOUND_LEADS_AON no Journey Builder"
             label="Mapa geral da jornada"
             className="w-full object-cover object-top"
@@ -220,7 +220,7 @@ export function JourneyStory() {
           </div>
           <div ref={scrollRef} className="min-h-0 flex-1 overflow-auto bg-muted p-3 sm:p-5">
             <AssetImage
-              src={journeyMap.url}
+              src={journeyMapUrl}
               alt="Mapa completo da jornada JNY_INBOUND_LEADS_AON"
               label="Mapa geral da jornada"
               className={zoom === 100 ? "mx-auto block h-auto w-full max-w-[1100px]" : "mx-auto block h-auto max-w-none"}

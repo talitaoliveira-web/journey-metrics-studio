@@ -12,18 +12,18 @@ import {
 import {
   Database, LogIn, Send, GitBranch, TrendingUp, Lightbulb, ShieldAlert, Activity, Info, Calendar, Mail,
 } from "lucide-react";
-import e1 from "@/assets/eml01.jpg.asset.json";
-import e2 from "@/assets/eml02.jpg.asset.json";
-import e3 from "@/assets/eml03.jpg.asset.json";
-import e4 from "@/assets/eml04.jpg.asset.json";
-import e5 from "@/assets/eml05.jpg.asset.json";
+import e1 from "@/assets/eml01.jpg";
+import e2 from "@/assets/eml02.jpg";
+import e3 from "@/assets/eml03.jpg";
+import e4 from "@/assets/eml04.jpg";
+import e5 from "@/assets/eml05.jpg";
 
 const pieces = [
-  { id: "EML 01", img: e1, subject: "O que é Globo Ads? A gente te mostra", pre: "Conheça soluções para diferentes objetivos de marca", desc: "Apresentação: introduz a Globo Ads e convida ao formulário de qualificação.", learning: "Investigar se a apresentação inicial leva ao formulário. Abertura e clique não comprovam qualificação." },
-  { id: "EML 02", img: e2, subject: "O que acontece quando marcas se conectam à Globo?", pre: "Resultados e insights para inspirar sua estratégia", desc: "Inspiração: apresenta cases e resultados para dar continuidade à conversa.", learning: "Testar se os cases e o assunto despertam interesse. Menos envios não provam desinteresse: quem converte pode sair antes desta etapa." },
-  { id: "EML 03", img: e3, subject: "Anunciar com a Globo é mais simples do que parece", pre: "Entenda como funciona na prática", desc: "Educação: aprofunda argumentos e benefícios sobre como anunciar.", learning: "Investigar a clareza da proposta e do convite ao formulário. A taxa de abertura não identifica, sozinha, a causa do desempenho." },
-  { id: "EML 04", img: e4, subject: "Vamos avançar com Globo Ads?", pre: "Falta só um próximo passo!", desc: "Avanço: retoma o convite para dar o próximo passo com a Globo Ads.", learning: "Investigar a resposta ao convite mais direto. Uma abertura alta não comprova que esta peça gerou mais MQL." },
-  { id: "EML 05", img: e5, subject: "O mercado está se movendo. E sua marca?", pre: "Veja onde estão as novas oportunidades", desc: "Oportunidade: encerra a sequência de peças com novos argumentos e cases.", learning: "Testar a força do convite final entre os contatos que ainda não converteram. Esse público não é necessariamente igual ao do primeiro envio." },
+  { id: "EML 01", img: { url: e1 }, subject: "O que é Globo Ads? A gente te mostra", pre: "Conheça soluções para diferentes objetivos de marca", desc: "Apresentação: introduz a Globo Ads e convida ao formulário de qualificação.", learning: "Investigar se a apresentação inicial leva ao formulário. Abertura e clique não comprovam qualificação." },
+  { id: "EML 02", img: { url: e2 }, subject: "O que acontece quando marcas se conectam à Globo?", pre: "Resultados e insights para inspirar sua estratégia", desc: "Inspiração: apresenta cases e resultados para dar continuidade à conversa.", learning: "Testar se os cases e o assunto despertam interesse. Menos envios não provam desinteresse: quem converte pode sair antes desta etapa." },
+  { id: "EML 03", img: { url: e3 }, subject: "Anunciar com a Globo é mais simples do que parece", pre: "Entenda como funciona na prática", desc: "Educação: aprofunda argumentos e benefícios sobre como anunciar.", learning: "Investigar a clareza da proposta e do convite ao formulário. A taxa de abertura não identifica, sozinha, a causa do desempenho." },
+  { id: "EML 04", img: { url: e4 }, subject: "Vamos avançar com Globo Ads?", pre: "Falta só um próximo passo!", desc: "Avanço: retoma o convite para dar o próximo passo com a Globo Ads.", learning: "Investigar a resposta ao convite mais direto. Uma abertura alta não comprova que esta peça gerou mais MQL." },
+  { id: "EML 05", img: { url: e5 }, subject: "O mercado está se movendo. E sua marca?", pre: "Veja onde estão as novas oportunidades", desc: "Oportunidade: encerra a sequência de peças com novos argumentos e cases.", learning: "Testar a força do convite final entre os contatos que ainda não converteram. Esse público não é necessariamente igual ao do primeiro envio." },
 ];
 
 export const Route = createFileRoute("/")({

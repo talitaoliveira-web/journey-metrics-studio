@@ -45,7 +45,7 @@ const fmt = (n: number) => n.toLocaleString("pt-BR");
 const pct = (n: number) => n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
 
 const overviewMeta: { key: keyof Overview; icon: typeof Database; label: string; desc: string; tone: string }[] = [
-  { key: "base", icon: Database, label: "Base de origem", desc: "Base de origem dos contatos. Estar na base não significa ter iniciado a jornada.", tone: "blue" },
+  { key: "base", icon: Database, label: "Base de origem", desc: "Total de registros da DE_JORNADALEADS_QUALIFICACAOMQL_AGO25. Estar na base não significa ter iniciado a jornada.", tone: "blue" },
   { key: "entradas", icon: LogIn, label: "Entradas na Jornada", desc: "Contatos que iniciaram a jornada no período.", tone: "purple" },
   { key: "envios", icon: Send, label: "Total de Envios", desc: "Total informado no resumo da fonte. Não equivale ao número de pessoas nem à soma do tracking abaixo.", tone: "pink" },
 ];
@@ -245,7 +245,7 @@ function Dashboard() {
 
         <div className="col-span-12 border-l-2 border-globo-purple py-2 pl-4 text-sm leading-6 text-muted-foreground">
           <p><strong className="text-foreground">Da base à oportunidade comercial:</strong> a base é o ponto de partida; as entradas mostram quem iniciou o relacionamento; os envios são comunicações; o MQL preenchido representa o objetivo atingido. Uma pessoa pode receber mais de um e-mail.</p>
-          <p className="mt-2 text-xs"><strong className="text-foreground">Conferência dos indicadores:</strong> o valor de referência dos envios do E-mail 01 foi corrigido para 1.923, conforme confirmação da responsável pela mesma base. As demais quantidades e taxas foram preservadas, sem recálculo. As 3.347 aberturas únicas registradas para esse e-mail excedem os envios corrigidos e precisam ser conferidas na fonte, assim como as taxas e os totais, antes de comparar o desempenho.</p>
+          <p className="mt-2 text-xs"><strong className="text-foreground">Conferência dos indicadores:</strong> os envios por e-mail foram atualizados conforme os dados por e-mail (EML_INBOUND_LEADS_AON_01 a 05): 4.149, 2.503, 2.043, 1.048 e 931, somando 10.674. Para o E-mail 01, esse valor substitui a referência anterior de 1.923. As demais quantidades e taxas foram preservadas, sem recálculo; por isso, taxas como abertura e CTR podem não corresponder aos novos envios e precisam ser conferidas na fonte antes de comparar o desempenho.</p>
         </div>
 
         {/* Block 2 */}

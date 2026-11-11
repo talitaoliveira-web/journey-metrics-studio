@@ -12,7 +12,8 @@ PT-BR analytics dashboard (Lovable/TanStack Start: React 19, Tailwind v4, shadcn
 ## Data model (browser-safe modules)
 - `journey-data.ts`: JourneyData = { overview (base/entradas/envios), flow FlowStep[], emails EmailRow[5], consolidated ConsolidatedItem[] }; SHEET_TABS = Visao_Geral, Fluxo, Emails, Consolidado. Missing tabs fall back to defaults.
 - `leads.ts`: LeadRow tuple (17 cols) → Lead; consolidateLeads builds the funnel; splitStatus parses "…saiu da jornada após E-mail N".
-- `email-validation.ts`: pure E-mail 01 consistency diagnostics (1.923 envios baseline), no metric mutation.
+- Confirmed figures: base 9.719 (DE_JORNADALEADS_QUALIFICACAOMQL_AGO25); sends per email in `CONFIRMED_SENDS` (EML 01–05: 4.149, 2.503, 2.043, 1.048, 931; total 10.674). Rates/opens/clicks preserved from source, not recalculated. Parser maps superseded sends (EML 01: 12.613/1.923; EML 02–05 old values) to the confirmed ones.
+- `email-validation.ts`: pure E-mail 01 consistency diagnostics against `CONFIRMED_SENDS["EML 01"]`, no metric mutation (currently flags CTR 1,24% vs 157/4.149 = 3,78%).
 
 ## Key flows
 - Reader journey: header (Renderize + date/email filter + last update) → Fonte dos dados (Google Sheets override) → Contexto da Jornada → Por dentro da jornada (map canvas + 12-step narrative + insights) → Visão Geral → tracking charts → Email gallery (compact previews + zoom dialog) → lead funnel → final interpretations.

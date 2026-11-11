@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { AssetImage } from "@/components/asset-image";
 
-import type { EmailRow } from "@/lib/journey-data";
+import { CONFIRMED_SENDS, type EmailRow } from "@/lib/journey-data";
 import { validateEmail01 } from "@/lib/email-validation";
 
 type EmailPiece = {
@@ -72,7 +72,7 @@ export function EmailGallery({ pieces, metrics }: { pieces: EmailPiece[]; metric
                 {[["Envios", fmt(row.sends)], ["Abertura", pct(row.openRate)], ["Aberturas únicas", fmt(row.uniqueOpens)], ["Cliques", fmt(row.clicks)], ["CTR", pct(row.ctr)], ["CTOR", pct(row.ctor)], ["Falhas de entrega", pct(row.bounce)], ["Descadastros", pct(row.unsub)]].map(([label, value]) => <div key={label}><dt className="text-muted-foreground">{label}</dt><dd className="mt-1 font-semibold tabular-nums text-foreground">{value}</dd></div>)}
               </dl>
               {issues.length > 0 && <div role="status" aria-label="Inconsistências do E-mail 01" className="mt-4 border-l-2 border-warning pl-3 text-xs leading-5 text-muted-foreground">
-                <p className="font-semibold text-warning">Indicadores inconsistentes com 1.923 envios</p>
+                <p className="font-semibold text-warning">Indicadores inconsistentes com {fmt(CONFIRMED_SENDS["EML 01"] ?? row.sends)} envios</p>
                 <ul className="mt-2 list-disc space-y-2 pl-4">{issues.map(issue => <li key={issue.code}>{issue.message}</li>)}</ul>
                 <p className="mt-2">Valores preservados. Os cálculos de conferência não substituem as taxas registradas. Falhas e descadastros são verificados apenas quanto ao intervalo percentual, pois suas quantidades não foram informadas.</p>
               </div>}

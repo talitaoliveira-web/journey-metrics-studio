@@ -36,9 +36,20 @@ const KIND_LABELS: Record<FlowKind, string> = {
 
 export const EMAIL_HEADERS = ["Email", "Sends", "Open Rate", "Unique Opens", "Clicks", "CTR", "CTOR", "Bounce Rate", "Unsub Rate"];
 
+/** Envios confirmados por e-mail (EML_INBOUND_LEADS_AON_01 a 05). */
+export const CONFIRMED_SENDS: Record<string, number> = {
+  "EML 01": 4149, "EML 02": 2503, "EML 03": 2043, "EML 04": 1048, "EML 05": 931,
+};
+
+/** Valores de envios substituídos que planilhas antigas ainda podem trazer. */
+const SUPERSEDED_SENDS: Record<string, number[]> = {
+  "EML 01": [12613, 1923], "EML 02": [4510], "EML 03": [4018], "EML 04": [2593], "EML 05": [2466],
+};
+
 export const defaultJourney: JourneyData = {
   // Fonte oficial: planilha Jornada_inbound_AON_métricas.xlsx (abas Visao_Geral, Fluxo e Consolidado).
-  overview: { base: 7425, entradas: 1923, envios: 3366 },
+  // Base corrigida: 9.719 registros na DE_JORNADALEADS_QUALIFICACAOMQL_AGO25 (valor informado, acima do 7.425 da planilha original).
+  overview: { base: 9719, entradas: 1923, envios: 3366 },
   flow: [
     { step: "Entradas", v: 1923, kind: "entry" },
     { step: "Email 01", v: 1923, kind: "email" },
@@ -59,15 +70,16 @@ export const defaultJourney: JourneyData = {
     { step: "Não Convertido", v: 352, kind: "end" },
   ],
   emails: [
-    { email: "EML 01", sends: 1923, openRate: 26.54, uniqueOpens: 3347, clicks: 157, ctr: 1.24, ctor: 4.69, bounce: 3.23, unsub: 0.86 },
-    { email: "EML 02", sends: 4510, openRate: 7.8, uniqueOpens: 352, clicks: 31, ctr: 0.69, ctor: 8.81, bounce: 0.33, unsub: 0.78 },
-    { email: "EML 03", sends: 4018, openRate: 5.23, uniqueOpens: 210, clicks: 15, ctr: 0.37, ctor: 7.14, bounce: 0.35, unsub: 0.5 },
-    { email: "EML 04", sends: 2593, openRate: 62.32, uniqueOpens: 1616, clicks: 71, ctr: 2.74, ctor: 4.39, bounce: 0.27, unsub: 1.27 },
-    { email: "EML 05", sends: 2466, openRate: 60.1, uniqueOpens: 1482, clicks: 60, ctr: 2.43, ctor: 4.05, bounce: 0.24, unsub: 0.65 },
+    // Envios atualizados pelos dados por e-mail; demais indicadores preservados da fonte, sem recálculo.
+    { email: "EML 01", sends: 4149, openRate: 26.54, uniqueOpens: 3347, clicks: 157, ctr: 1.24, ctor: 4.69, bounce: 3.23, unsub: 0.86 },
+    { email: "EML 02", sends: 2503, openRate: 7.8, uniqueOpens: 352, clicks: 31, ctr: 0.69, ctor: 8.81, bounce: 0.33, unsub: 0.78 },
+    { email: "EML 03", sends: 2043, openRate: 5.23, uniqueOpens: 210, clicks: 15, ctr: 0.37, ctor: 7.14, bounce: 0.35, unsub: 0.5 },
+    { email: "EML 04", sends: 1048, openRate: 62.32, uniqueOpens: 1616, clicks: 71, ctr: 2.74, ctor: 4.39, bounce: 0.27, unsub: 1.27 },
+    { email: "EML 05", sends: 931, openRate: 60.1, uniqueOpens: 1482, clicks: 60, ctr: 2.43, ctor: 4.05, bounce: 0.24, unsub: 0.65 },
   ],
-  // Consolidado derivado da soma ponderada dos 5 e-mails da aba Consolidado.
+  // Consolidado da aba Consolidado; Total Sends = soma dos envios confirmados por e-mail (10.674).
   consolidated: [
-    { label: "Total Sends", value: 26200, isRate: false },
+    { label: "Total Sends", value: 10674, isRate: false },
     { label: "Unique Opens", value: 7007, isRate: false },
     { label: "Open Rate", value: 26.74, isRate: true },
     { label: "Unique Clicks", value: 334, isRate: false },
@@ -142,8 +154,9 @@ export function parseJourneySheets(tabs: Partial<Record<keyof typeof SHEET_TABS,
       const nums = row.slice(1, 9).map(parseNumber);
       if (!name || nums.length < 8 || nums.some((x) => x === null)) continue;
       const [sends, openRate, uniqueOpens, clicks, ctr, ctor, bounce, unsub] = nums as [number, number, number, number, number, number, number, number];
-      // Preserve the confirmed correction when an older sheet still carries the superseded value.
-      const correctedSends = name === "EML 01" && sends === 12613 ? 1923 : sends;
+      // Preserve confirmed sends when an older sheet still carries a superseded value.
+      const confirmed = CONFIRMED_SENDS[name];
+      const correctedSends = confirmed !== undefined && SUPERSEDED_SENDS[name]?.includes(sends) ? confirmed : sends;
       list.push({ email: name, sends: correctedSends, openRate, uniqueOpens, clicks, ctr, ctor, bounce, unsub });
     }
     if (list.length) { data.emails = list; loaded.push(SHEET_TABS.emails); }

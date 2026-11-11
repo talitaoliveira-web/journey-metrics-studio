@@ -95,9 +95,10 @@ function Dashboard() {
   const data = sheetData ?? defaultJourney;
   const { flow, emails } = data;
   const rows = selected === "all" ? emails : emails.filter((e) => e.email === selected);
-  const maxFlow = Math.max(1, ...flow.map((f) => f.v));
-  const lastEmail = [...flow].reverse().find((f) => f.kind === "email");
-  const lastSplit = [...flow].reverse().find((f) => f.kind === "split");
+  // 02.2 mostra apenas entradas e e-mails; validações, esperas e saídas ficam fora da visualização.
+  const stages = flow.filter((f) => f.kind === "entry" || f.kind === "email");
+  const maxFlow = Math.max(1, ...stages.map((f) => f.v));
+  const lastEmail = [...stages].reverse().find((f) => f.kind === "email");
   const firstTracking = emails.find((email) => email.email === "EML 01");
   const openingFact = ["EML 04", "EML 05"].map((id) => {
     const email = emails.find((item) => item.email === id);
@@ -249,23 +250,16 @@ function Dashboard() {
         </div>
 
         {/* Block 2 */}
-        <SectionTitle n="02.2" title="Estágios da Jornada" sub="Registros por atividade na planilha" color="bg-globo-pink" />
-        <Panel className="col-span-12 xl:col-span-8" title="Contatos por etapa">
+        <SectionTitle n="02.2" title="Estágios da Jornada" sub="Entradas e envios por e-mail" color="bg-globo-pink" />
+        <Panel className="col-span-12 xl:col-span-8" title="Entradas e e-mails">
           <div className="space-y-1.5">
-            {flow.map((f, i) => {
-              const emailIdx = flow.slice(0, i).filter((x) => x.kind === "email").length;
-              const barStyle =
-                f.kind === "email"
-                  ? { background: emailColors[emailIdx] }
-                  : f.kind === "entry"
-                    ? { background: "var(--color-foreground)" }
-                    : f.kind === "end"
-                      ? { background: "var(--color-warning)" }
-                      : { background: "var(--color-muted-foreground)", opacity: 0.25 };
+            {stages.map((f, i) => {
+              const emailIdx = stages.slice(0, i).filter((x) => x.kind === "email").length;
+              const barStyle = f.kind === "email" ? { background: emailColors[emailIdx] } : { background: "var(--color-foreground)" };
               return (
-                <div key={i} className="grid grid-cols-12 items-center gap-3 text-sm">
+                <div key={i} data-testid={`journey-stage-${i + 1}`} className="grid grid-cols-12 items-center gap-3 text-sm">
                   <span className="col-span-1 text-right text-xs tabular-nums text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
-                  <span className={`col-span-3 ${f.kind === "email" || f.kind === "entry" ? "font-semibold text-foreground" : "text-muted-foreground"}`}>{f.step}</span>
+                  <span className="col-span-3 font-semibold text-foreground">{f.step}</span>
                   <div className="col-span-6 h-5 rounded-sm bg-muted">
                     <div className="h-5 rounded-sm" style={{ width: `${(f.v / maxFlow) * 100}%`, ...barStyle }} />
                   </div>
@@ -278,8 +272,6 @@ function Dashboard() {
             {[
               ["Entrada", "var(--color-foreground)"],
               ["E-mails (cada cor é um envio)", "var(--globo-purple)"],
-              ["Aguardando / Validação do MQL", "var(--color-muted-foreground)"],
-              ["Saída sem conversão", "var(--color-warning)"],
             ].map(([label, color]) => (
               <span key={label} className="flex items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-sm" style={{ background: color }} /> {label}
@@ -293,8 +285,7 @@ function Dashboard() {
               {[
                 ["Entradas", fmt(data.overview.entradas)],
                 [`Chegaram ao ${lastEmail?.step ?? "último e-mail"}`, fmt(lastEmail?.v ?? 0)],
-                ["Registros na última checagem", fmt(lastSplit?.v ?? 0)],
-                ["Atividades listadas na planilha", String(flow.length)],
+                ["Etapas exibidas", String(stages.length)],
               ].map(([a, b]) => (
                 <div key={a} className="flex items-center justify-between border-b border-border pb-3 last:border-0 last:pb-0">
                   <dt className="text-muted-foreground">{a}</dt>
@@ -309,7 +300,7 @@ function Dashboard() {
               <div>
                 <p className="text-sm font-semibold text-foreground">Como ler os volumes</p>
                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                   Os volumes são registros por atividade, não parcelas que se somam. A validação checa o preenchimento do MQL; não é o total de MQL convertidos. Quem converte sai antes das próximas comunicações. A mesma pessoa pode aparecer em várias atividades. Não some essas linhas como se fossem pessoas distintas.
+                   Entradas são contatos que iniciaram a jornada; os e-mails mostram os envios de cada peça. Os volumes não são parcelas que se somam. Quem converte sai antes das próximas comunicações. A mesma pessoa pode aparecer em várias atividades. Não some essas linhas como se fossem pessoas distintas.
                  </p>
               </div>
             </div>

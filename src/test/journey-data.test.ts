@@ -23,6 +23,14 @@ describe("journey sheet parsing", () => {
     expect(data.emails.find(email => email.email === "EML 01")?.sends).toBe(4149);
   });
 
+  it("uses confirmed sends for the email stages and corrects superseded sheet values", () => {
+    expect(defaultJourney.flow.filter(f => f.kind === "email").map(f => f.v)).toEqual([4149, 2503, 2043, 1048, 931]);
+    const tabs = templateRows();
+    const old: Record<string, number> = { "Email 01": 1923, "Email 02": 1188, "Email 03": 867, "Email 04": 573, "Email 05": 483 };
+    for (const row of tabs.flow) { const v = old[String(row[0])]; if (v !== undefined) row[1] = v; }
+    expect(parseJourneySheets(tabs).data.flow).toEqual(defaultJourney.flow);
+  });
+
   it("parses pt-BR numbers and percents", () => {
     expect(parseNumber("1.923")).toBe(1923);
     expect(parseNumber("28,55%")).toBe(28.55);

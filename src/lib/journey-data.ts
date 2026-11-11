@@ -46,25 +46,32 @@ const SUPERSEDED_SENDS: Record<string, number[]> = {
   "EML 01": [12613, 1923], "EML 02": [4510], "EML 03": [4018], "EML 04": [2593], "EML 05": [2466],
 };
 
+/** Valores antigos das etapas de e-mail do Fluxo, substituídos pelos envios confirmados. */
+const SUPERSEDED_FLOW: Record<string, { old: number; next: number }> = {
+  "Email 01": { old: 1923, next: 4149 }, "Email 02": { old: 1188, next: 2503 }, "Email 03": { old: 867, next: 2043 },
+  "Email 04": { old: 573, next: 1048 }, "Email 05": { old: 483, next: 931 },
+};
+
 export const defaultJourney: JourneyData = {
   // Fonte oficial: planilha Jornada_inbound_AON_métricas.xlsx (abas Visao_Geral, Fluxo e Consolidado).
   // Base corrigida: 9.719 registros na DE_JORNADALEADS_QUALIFICACAOMQL_AGO25 (valor informado, acima do 7.425 da planilha original).
   overview: { base: 9719, entradas: 1923, envios: 3366 },
+  // Etapas de e-mail usam os envios confirmados por e-mail; demais etapas preservadas da planilha.
   flow: [
     { step: "Entradas", v: 1923, kind: "entry" },
-    { step: "Email 01", v: 1923, kind: "email" },
+    { step: "Email 01", v: 4149, kind: "email" },
     { step: "Aguardando próximo envio", v: 1899, kind: "wait" },
     { step: "Validação do MQL", v: 1646, kind: "split" },
-    { step: "Email 02", v: 1188, kind: "email" },
+    { step: "Email 02", v: 2503, kind: "email" },
     { step: "Aguardando próximo envio", v: 1098, kind: "wait" },
     { step: "Validação do MQL", v: 376, kind: "split" },
-    { step: "Email 03", v: 867, kind: "email" },
+    { step: "Email 03", v: 2043, kind: "email" },
     { step: "Aguardando próximo envio", v: 862, kind: "wait" },
     { step: "Validação do MQL", v: 692, kind: "split" },
-    { step: "Email 04", v: 573, kind: "email" },
+    { step: "Email 04", v: 1048, kind: "email" },
     { step: "Aguardando próximo envio", v: 573, kind: "wait" },
     { step: "Validação do MQL", v: 483, kind: "split" },
-    { step: "Email 05", v: 483, kind: "email" },
+    { step: "Email 05", v: 931, kind: "email" },
     { step: "Aguardando próximo envio", v: 470, kind: "wait" },
     { step: "Última validação do MQL", v: 352, kind: "split" },
     { step: "Não Convertido", v: 352, kind: "end" },
@@ -141,7 +148,10 @@ export function parseJourneySheets(tabs: Partial<Record<keyof typeof SHEET_TABS,
     for (const row of tabs.flow.slice(1)) {
       const n = parseNumber(row[1]);
       const kind = kindFrom(row[2]);
-      if (String(row[0] ?? "").trim() && n !== null && kind) steps.push({ step: String(row[0]).trim(), v: n, kind });
+      const step = String(row[0] ?? "").trim();
+      if (!step || n === null || !kind) continue;
+      const fix = kind === "email" ? SUPERSEDED_FLOW[step] : undefined;
+      steps.push({ step, v: fix && fix.old === n ? fix.next : n, kind });
     }
     if (steps.length) { data.flow = steps; loaded.push(SHEET_TABS.flow); }
     else warnings.push(`Aba ${SHEET_TABS.flow} sem etapas válidas.`);

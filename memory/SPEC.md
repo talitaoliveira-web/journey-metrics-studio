@@ -19,7 +19,7 @@ PT-BR analytics dashboard (Lovable/TanStack Start: React 19, Tailwind v4, shadcn
 - Email filter select filters per-email views; zoom dialogs support 100–200/250% zoom.
 
 ## Known trade-offs (spec deviations)
-- Email artworks (eml01–05.jpg, jornada-canvas.jpg) are Lovable R2 assets unreachable outside the Lovable editor; `src/components/asset-image.tsx` attempts the Lovable URL and degrades to a labeled placeholder (`data-asset-fallback="true"`) — self-heals where the /__l5e proxy exists. The browser logs one 404 per asset attempt; no broken-image UI remains.
+- None open. Email artworks (eml01–05.jpg, jornada-canvas.jpg) were recovered byte-perfect from the project's Lovable preview origin and are now committed at `src/assets/*.jpg`, imported directly (see `src/vite-env.d.ts`). `src/components/asset-image.tsx` remains as a safety net: it renders the local asset and degrades to a labeled placeholder (`data-asset-fallback="true"`) only if an image ever fails to load.
 
 ## Auth
 None. No accounts or gated areas.

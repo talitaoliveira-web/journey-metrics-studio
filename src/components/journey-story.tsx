@@ -104,12 +104,12 @@ function ConditionBlock({ condition }: { condition: Condition }) {
   return (
     <div className="mt-3 grid gap-2 sm:grid-cols-2">
       <div className="rounded-md border border-border bg-success-soft p-3">
-        <p className="text-[10px] font-semibold uppercase tracking-wide text-success">Se</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-success">Se</p>
         <p className="mt-1 text-xs font-medium leading-5 text-foreground">{condition.se}</p>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">{condition.sePath}</p>
       </div>
       <div className="rounded-md border border-border bg-muted p-3">
-        <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Não</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Não</p>
         <p className="mt-1 text-xs font-medium leading-5 text-foreground">{condition.nao}</p>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">{condition.naoPath}</p>
       </div>
@@ -177,14 +177,14 @@ export function JourneyStory() {
                   <step.icon className="h-4 w-4" aria-hidden="true" />
                 </span>
                 <div className="min-w-0 flex-1 rounded-md border border-border bg-card p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     Passo explicativo {String(i + 1).padStart(2, "0")} de {steps.length}
                   </p>
                   <p className="mt-1 text-sm font-semibold text-foreground">{step.title}</p>
                   <p className="mt-1 text-xs leading-5 text-muted-foreground">{step.text}</p>
                   {step.condition && <ConditionBlock condition={step.condition} />}
                   {i < steps.length - 1 && (
-                    <p className="mt-3 flex items-center gap-1.5 text-[11px] font-medium text-primary">
+                    <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-primary">
                       <ArrowDown className="h-3 w-3" aria-hidden="true" /> Em seguida: {steps[i + 1]?.title}
                     </p>
                   )}
@@ -251,7 +251,7 @@ export function JourneyStructureInsights() {
             <ul className="mt-4 space-y-3">
               {revelations.map((text, i) => (
                 <li key={i} className="flex gap-3 rounded-md border border-border p-3">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-sm bg-primary-soft text-[11px] font-semibold text-primary">{i + 1}</span>
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-sm bg-primary-soft text-xs font-semibold text-primary">{i + 1}</span>
                   <p className="text-xs leading-5 text-muted-foreground">{text}</p>
                 </li>
               ))}

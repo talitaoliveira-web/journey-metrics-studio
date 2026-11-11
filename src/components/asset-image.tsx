@@ -43,7 +43,7 @@ export function AssetImage({ src, alt, label, className, style, fallbackClassNam
       >
         <ImageOff aria-hidden="true" className="h-5 w-5 shrink-0 text-muted-foreground" />
         <p className="text-xs font-medium text-foreground">{label}</p>
-        <p className="text-[11px] leading-4 text-muted-foreground">Arte indisponível nesta visualização. Os dados do relatório não mudam.</p>
+        <p className="text-xs leading-4 text-muted-foreground">Arte indisponível nesta visualização. Os dados do relatório não mudam.</p>
       </div>
     );
   }

@@ -60,14 +60,14 @@ export function EmailGallery({ pieces, metrics }: { pieces: EmailPiece[]; metric
               </span>
             </div>
             <div className="min-w-0 px-3 py-3">
-              <p className="text-[11px] font-semibold text-primary">{piece.id} · {index + 1} de {pieces.length}</p>
+              <p className="text-xs font-semibold text-primary">{piece.id} · {index + 1} de {pieces.length}</p>
               <p className="mt-1 line-clamp-2 min-h-10 whitespace-normal text-xs font-medium leading-5 text-foreground">{piece.subject}</p>
             </div>
           </Button>
           <div className="border-t border-border px-3 pb-4 pt-3">
             <p className="text-xs leading-5 text-muted-foreground">{piece.desc}</p>
             {row ? <>
-              <p className="mb-2 mt-4 text-[10px] font-semibold uppercase text-primary">Indicadores registrados</p>
+              <p className="mb-2 mt-4 text-xs font-semibold uppercase text-primary">Indicadores registrados</p>
               <dl className="grid grid-cols-2 gap-x-2 gap-y-3 text-xs">
                 {[["Envios", fmt(row.sends)], ["Abertura", pct(row.openRate)], ["Aberturas únicas", fmt(row.uniqueOpens)], ["Cliques", fmt(row.clicks)], ["CTR", pct(row.ctr)], ["CTOR", pct(row.ctor)], ["Falhas de entrega", pct(row.bounce)], ["Descadastros", pct(row.unsub)]].map(([label, value]) => <div key={label}><dt className="text-muted-foreground">{label}</dt><dd className="mt-1 font-semibold tabular-nums text-foreground">{value}</dd></div>)}
               </dl>

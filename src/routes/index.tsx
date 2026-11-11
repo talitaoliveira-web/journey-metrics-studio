@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toLead, type Lead, type LeadRow } from "@/lib/leads";
 import { EmailGallery } from "@/components/email-gallery";
 import { JourneyStory, JourneyStructureInsights } from "@/components/journey-story";
 import { SheetSource } from "@/components/sheet-source";
 import { LeadsSection } from "@/components/leads-section";
+import { DidacticDashboard } from "@/components/didactic/didactic-dashboard";
+import journeyMapUrl from "@/assets/jornada-canvas.jpg";
 import { defaultJourney, type JourneyData, type Overview } from "@/lib/journey-data";
 import {
   Bar, BarChart, CartesianGrid, LabelList, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
@@ -61,9 +63,9 @@ const emailColors = ["var(--globo-blue)", "var(--globo-purple)", "var(--globo-pi
 
 const toneBg: Record<string, string> = { primary: "bg-primary-soft text-primary", success: "bg-success-soft text-success", warning: "bg-warning-soft text-warning" };
 
-function SectionTitle({ n, title, sub, color = "bg-globo-blue" }: { n: string; title: string; sub?: string; color?: string }) {
+function SectionTitle({ n, title, sub, color = "bg-globo-blue", id }: { n: string; title: string; sub?: string; color?: string; id?: string }) {
   return (
-    <div className="col-span-12 mt-4 flex flex-wrap items-end justify-between gap-2 border-b border-border pb-3">
+    <div id={id} className="col-span-12 mt-4 scroll-mt-32 flex flex-wrap items-end justify-between gap-2 border-b border-border pb-3">
       <div className="flex items-center gap-3">
         <span className={`flex h-7 min-w-9 items-center justify-center rounded-md px-1.5 text-xs font-bold text-primary-foreground ${color}`}>{n}</span>
         <h2 className="text-lg font-semibold text-foreground">{title}</h2>
@@ -82,13 +84,18 @@ function Panel({ className = "", title, children }: { className?: string; title?
   );
 }
 
-const axis = { fontSize: 11, fill: "var(--color-muted-foreground)" };
+const axis = { fontSize: 14, fill: "var(--color-muted-foreground)" };
 
 function Dashboard() {
   const [leads, setLeads] = useState<Lead[] | null>(null);
-  useEffect(() => {
-    import("@/data/leads.json").then((module) => setLeads((module.default as LeadRow[]).map(toLead)));
+  const [leadsError, setLeadsError] = useState(false);
+  const loadLeads = useCallback(() => {
+    setLeadsError(false);
+    import("@/data/leads.json")
+      .then((module) => setLeads((module.default as LeadRow[]).map(toLead)))
+      .catch(() => setLeadsError(true));
   }, []);
+  useEffect(() => { loadLeads(); }, [loadLeads]);
   const [selected, setSelected] = useState("all");
   const [sheetData, setSheetData] = useState<JourneyData | null>(null);
   const [sheetInfo, setSheetInfo] = useState<{ title: string; at: Date } | null>(null);
@@ -121,17 +128,18 @@ function Dashboard() {
             <div>
               <p className="text-xs font-medium uppercase tracking-widest text-primary-foreground/70">Globo • CRM • WPP Commerce</p>
               <h1 className="mt-2 text-4xl font-bold tracking-tight">Renderize</h1>
-              <p className="mt-1 text-base text-primary-foreground/80">Jornada inbound AON • Salesforce Marketing Cloud • JNY_INBOUND_LEADS_AON</p>
+              <p className="mt-1 text-base text-primary-foreground/90">Jornada <strong className="font-semibold">JNY_INBOUND_LEADS_AON</strong> • Salesforce Marketing Cloud</p>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-primary-foreground/90">Um painel para entender, em linguagem simples, quem entrou na jornada, por onde passou e quantos viraram leads qualificados.</p>
             </div>
             <div className="flex flex-wrap items-end gap-3">
               <div>
-                <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-primary-foreground/70">Data de início</label>
+                <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-primary-foreground/70">Data de início</label>
                 <div className="flex h-9 items-center gap-2 rounded-md border border-primary-foreground/25 bg-primary-foreground/10 px-3 text-sm">
                   <Calendar className="h-4 w-4 text-primary-foreground/70" /> 26/08/2026
                 </div>
               </div>
               <div>
-                <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-primary-foreground/70">Email</label>
+                <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-primary-foreground/70">Email</label>
                 <div className="flex h-9 items-center gap-2 rounded-md border border-primary-foreground/25 bg-primary-foreground/10 px-3 text-sm">
                   <Mail className="h-4 w-4 text-primary-foreground/70" />
                   <select value={selected} onChange={(e) => setSelected(e.target.value)} className="bg-transparent outline-none">
@@ -141,7 +149,7 @@ function Dashboard() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-[11px] font-medium uppercase tracking-wide text-primary-foreground/70">Última atualização</p>
+                <p className="text-xs font-medium uppercase tracking-wide text-primary-foreground/70">Última atualização</p>
                 <p className="mt-1 text-sm font-medium">
                   {sheetInfo
                     ? `${sheetInfo.at.toLocaleDateString("pt-BR")} • ${sheetInfo.at.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`
@@ -151,6 +159,14 @@ function Dashboard() {
             </div>
           </div>
         </header>
+
+        <DidacticDashboard leads={leads} leadsError={leadsError} onRetry={loadLeads} emails={emails} pieces={pieces} mapUrl={journeyMapUrl} />
+
+        <div id="analise-detalhada" className="col-span-12 mt-10 scroll-mt-32 rounded-2xl border border-border bg-muted/50 p-6" data-testid="detailed-analysis-intro">
+          <p className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">Para quem quer se aprofundar</p>
+          <h2 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">Análise detalhada</h2>
+          <p className="mt-2 max-w-4xl text-sm leading-6 text-muted-foreground">As seções 00 a 06 trazem o contexto completo da jornada, o mapa original, as peças de e-mail, a base de contatos e os insights estratégicos, com termos técnicos. A fonte de dados abaixo também alimenta a seção 3 (Desempenho das comunicações).</p>
+        </div>
 
         <SheetSource
           onData={(d, info) => {
@@ -179,7 +195,7 @@ function Dashboard() {
                 "Abrir ou clicar nos e-mails não tira o contato da jornada: ele segue para as próximas etapas até preencher o MQL.",
               ].map((t, i) => (
                 <li key={i} className="flex gap-3">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-sm bg-primary-soft text-[11px] font-semibold text-primary">{i + 1}</span>
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-sm bg-primary-soft text-xs font-semibold text-primary">{i + 1}</span>
                   <span>{t}</span>
                 </li>
               ))}
@@ -210,7 +226,7 @@ function Dashboard() {
               ["Resultado", "Audiência elegível antes do primeiro envio, ainda a qualificar"],
             ].map(([t, d], i) => (
               <div key={t} className="rounded-md border border-border p-3">
-                <p className={`text-[11px] font-semibold uppercase tracking-wide ${["text-globo-blue", "text-globo-purple", "text-globo-pink", "text-globo-orange"][i % 4]}`}>{String(i + 1).padStart(2, "0")} · {t}</p>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${["text-globo-blue", "text-globo-purple", "text-globo-pink", "text-globo-orange"][i % 4]}`}>{String(i + 1).padStart(2, "0")} · {t}</p>
                 <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{d}</p>
               </div>
             ))}
@@ -226,7 +242,7 @@ function Dashboard() {
           ["Exemplo ilustrativo", "De 100 leads captados, 70 preencheram o CPF e 50 atenderam aos critérios de qualificação. A quantidade de conversões finais precisa ser verificada separadamente. Esses números são apenas ilustrativos e não substituem os dados reais do dashboard."],
         ].map(([title, text], index) => <Panel key={title} className="col-span-12 md:col-span-6 xl:col-span-3" title={`${index + 1}. ${title}`}><p className="text-xs leading-5 text-muted-foreground">{text}</p></Panel>)}
 
-        <SectionTitle n="02" title="Por dentro da jornada: como funciona a estratégia de Inbound Leads" sub="Mapa original e explicação passo a passo" color="bg-globo-purple" />
+        <SectionTitle id="por-dentro" n="02" title="Por dentro da jornada: como funciona a estratégia de Inbound Leads" sub="Mapa original e explicação passo a passo" color="bg-globo-purple" />
         <JourneyStory />
 
         {/* Block 1 */}
@@ -268,7 +284,7 @@ function Dashboard() {
               );
             })}
           </div>
-          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-t border-border pt-3 text-[11px] text-muted-foreground">
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-t border-border pt-3 text-xs text-muted-foreground">
             {[
               ["Entrada", "var(--color-foreground)"],
               ["E-mails (cada cor é um envio)", "var(--globo-purple)"],
@@ -314,7 +330,7 @@ function Dashboard() {
         <LeadsSection leads={leads} section="questions" />
 
         {/* Peças */}
-        <SectionTitle n="04" title="Os cinco e-mails da jornada" sub="Papel de cada peça e indicadores registrados" color="bg-globo-orange" />
+        <SectionTitle id="os-cinco-emails" n="04" title="Os cinco e-mails da jornada" sub="Papel de cada peça e indicadores registrados" color="bg-globo-orange" />
         <p className="col-span-12 text-sm leading-6 text-muted-foreground">As peças acompanham uma conversa progressiva: apresentar, inspirar, explicar e convidar à qualificação. Os números abaixo são do tracking de cada e-mail, não uma atribuição de MQL à peça.</p>
         <EmailGallery pieces={pieces} metrics={emails} />
 
@@ -325,7 +341,7 @@ function Dashboard() {
         <Panel className="col-span-12 overflow-x-auto" title="Comparativo por e-mail">
           <table className="w-full min-w-[900px] text-sm">
             <thead>
-              <tr className="border-b border-border text-left text-[11px] uppercase tracking-wide text-muted-foreground">
+              <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
                 {["E-mail", "Envios", "Taxa de abertura", "Aberturas únicas", "Cliques", "CTR", "CTOR", "Falhas de entrega (%)", "Descadastros (%)"].map((h, i) => (
                   <th key={h} className={`py-3 font-medium ${i ? "text-right" : ""}`}>{h}</th>
                 ))}
@@ -409,7 +425,7 @@ function Dashboard() {
 
         {/* Limites de leitura */}
         <footer className="col-span-12 mt-6 border-t border-border pt-5">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Limites de leitura</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Limites de leitura</p>
           <p className="mt-2 max-w-5xl text-xs leading-relaxed text-muted-foreground">
             As métricas de Estágios da Jornada representam os contatos que passaram pelas atividades configuradas no Journey Builder. As métricas de Performance dos E-mails representam os resultados operacionais dos disparos. Esses conjuntos possuem níveis de detalhe distintos e não devem ser comparados diretamente. CPF identifica uma pessoa; CNPJ identifica uma empresa. O preenchimento desses dados contribui para conhecer o contato, mas, isoladamente, não comprova conversão em MQL ou venda. As tabelas da base de contatos descrevem seus próprios registros e não substituem o resumo geral da jornada.
           </p>
@@ -423,7 +439,7 @@ function Dashboard() {
               <div className={`mb-3 inline-flex h-8 w-8 items-center justify-center rounded-md ${toneBg[i.tone]}`}>
                 <i.icon className="h-4 w-4" />
               </div>
-              <p className="mb-2 text-[10px] font-semibold uppercase text-muted-foreground">{i.label}</p>
+              <p className="mb-2 text-xs font-semibold uppercase text-muted-foreground">{i.label}</p>
               <p className="text-sm font-semibold text-foreground">{i.title}</p>
               <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{i.text}</p>
             </Panel>
